@@ -17,6 +17,9 @@ class SwipeViewModel : ViewModel() {
             _products.value = current
         }
     }
+    fun getProductById(productId: String): Product? {
+        return _products.value.find { it.id == productId }
+    }
 
     companion object {
         val sampleProducts = listOf(

@@ -1,7 +1,12 @@
 package com.example.swipebay.app_ui.components
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Icon
 import android.media.MediaDescription
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,25 +27,39 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.swipebay.data.model.Product
+import kotlin.math.abs
+import androidx.compose.ui.graphics.graphicsLayer
 
 @Composable
 fun SwipeCard(
     product: Product,
-    onSwiped: () -> Unit
+    onSwipeLeft: () -> Unit,
+    onSwipeRight: () -> Unit,
+    onClick: () -> Unit
 ) {
     var offsetX by remember { mutableStateOf(0f) }
     LaunchedEffect(product.id) {
         offsetX = 0f
     }
 
+    val alpha = 1f - (abs(offsetX) / 1000f).coerceIn(0f, 1f)
+
     Box(
         modifier = Modifier
             .offset { IntOffset(offsetX.toInt(), 0) }
+            .graphicsLayer(alpha = alpha)
             .pointerInput(Unit) {
-                detectHorizontalDragGestures { _, dragAmount ->
+                detectHorizontalDragGestures(
+                    onDragEnd = {
+                        offsetX = 0f
+                    }
+                ) { _, dragAmount ->
                     offsetX += dragAmount
-                    if (offsetX > 500 || offsetX < -500) {
-                        onSwiped()
+                    if (offsetX > 500) {
+                        onSwipeRight()
+                        offsetX = 0f
+                    } else if (offsetX < -500) {
+                        onSwipeLeft()
                         offsetX = 0f
                     }
                 }
@@ -55,16 +74,19 @@ fun SwipeCard(
             elevation = CardDefaults.cardElevation(6.dp)
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
-
-
-                Image(
-                    painter = rememberAsyncImagePainter(model = product.imageUrl),
-                    contentDescription = null,
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(180.dp),
-                    contentScale = ContentScale.Crop
-                )
+                        .height(180.dp)
+                        .clickable { onClick() }
+                ) {
+                    Image(
+                        painter = rememberAsyncImagePainter(model = product.imageUrl),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
 
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(text = product.title, fontSize = 20.sp, fontWeight = FontWeight.Bold)
@@ -72,6 +94,29 @@ fun SwipeCard(
                     Text(text = product.price, fontSize = 16.sp, color = MaterialTheme.colorScheme.primary)
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(text = product.description, fontSize = 14.sp)
+                    Spacer(modifier = Modifier.height(100.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        Text(text = "Like", fontSize = 16.sp)
+                        Icon(
+                            imageVector = Icons.Default.Favorite,
+                            contentDescription = "Like",
+                            modifier = Modifier.size(36.dp),
+                            tint = MaterialTheme.colorScheme.primary,
+
+                        )
+
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Dismiss",
+                            modifier = Modifier.size(36.dp),
+                            tint = MaterialTheme.colorScheme.error,
+
+                        )
+                        Text(text = "Dismiss", fontSize = 16.sp)
+                    }
                 }
             }
         }
