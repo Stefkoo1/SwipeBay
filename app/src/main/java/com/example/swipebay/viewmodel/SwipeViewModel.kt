@@ -21,6 +21,13 @@ class SwipeViewModel : ViewModel() {
         return _products.value.find { it.id == productId }
     }
 
+    fun addToWishlist(product: Product) {
+
+        val current = _products.value.toMutableList()
+        current.remove(product)
+        _products.value = current
+    }
+
     companion object {
         val sampleProducts = listOf(
             Product(

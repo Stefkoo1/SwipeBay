@@ -4,14 +4,19 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.swipebay.viewmodel.SwipeViewModel
+import androidx.navigation.NavController
 
 @Composable
-fun ProductDetailScreen(productId: String, viewModel: SwipeViewModel) {
+fun ProductDetailScreen(productId: String, viewModel: SwipeViewModel, navController: NavController) {
     val product = viewModel.getProductById(productId)
     if (product == null) {
         Text("Product not found", modifier = Modifier.padding(16.dp))
@@ -24,6 +29,10 @@ fun ProductDetailScreen(productId: String, viewModel: SwipeViewModel) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        IconButton(onClick = { navController.popBackStack() }) {
+            Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+        }
+
         Image(
             painter = rememberAsyncImagePainter(model = product.imageUrl),
             contentDescription = null,
@@ -37,5 +46,3 @@ fun ProductDetailScreen(productId: String, viewModel: SwipeViewModel) {
         Text(text = product.description, style = MaterialTheme.typography.bodyMedium)
     }
 }
-
-
