@@ -48,7 +48,8 @@ fun SwipeCard(
     product: Product,
     onSwipeLeft: () -> Unit,
     onSwipeRight: () -> Unit,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    isSwipeEnabled: Boolean
 ) {
     var offsetX by remember { mutableStateOf(0f) }
     var visible by remember { mutableStateOf(false) }
@@ -71,8 +72,8 @@ fun SwipeCard(
         exit = fadeOut()
     ) {
         Box(
-            modifier = Modifier
-                .pointerInput(Unit) {
+            modifier = Modifier.then(
+                if (isSwipeEnabled) Modifier.pointerInput(Unit) {
                     detectHorizontalDragGestures(
                         onDragEnd = {
                             offsetX = 0f
@@ -87,14 +88,52 @@ fun SwipeCard(
                             offsetX = 0f
                         }
                     }
-                }
+                } else Modifier
+            )
         ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(500.dp)
+                    .padding(horizontal = 24.dp, vertical = 8.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+
+
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Dismiss",
+                        modifier = Modifier
+                            .size((dismissAlpha * 100).dp)
+                            .graphicsLayer(alpha = dismissAlpha),
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = "Like",
+                        modifier = Modifier
+                            .size((likeAlpha * 100).dp)
+                            .graphicsLayer(alpha = likeAlpha),
+                        tint = MaterialTheme.colorScheme.primary
+
+                    )
+                }
+            }
             Card(
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .fillMaxWidth(0.98f)
                     .height(500.dp)
-                    .padding(8.dp),
+                    .padding(8.dp)
+                    .graphicsLayer {
+                        translationX = offsetX
+                        rotationZ = offsetX / 60f
+                        scaleX = 1f - (abs(offsetX) / 3000f).coerceIn(0f, 0.05f)
+                        scaleY = 1f - (abs(offsetX) / 3000f).coerceIn(0f, 0.05f)
+                    },
                 elevation = CardDefaults.cardElevation(6.dp)
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
@@ -118,29 +157,6 @@ fun SwipeCard(
                         Text(text = product.price, fontSize = 16.sp, color = MaterialTheme.colorScheme.primary)
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(text = product.description, fontSize = 14.sp)
-                        Spacer(modifier = Modifier.height(100.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Favorite,
-                                contentDescription = "Like",
-                                modifier = Modifier
-                                    .size((likeAlpha*50).dp)
-                                    .graphicsLayer(alpha = likeAlpha),
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = "Dismiss",
-                                modifier = Modifier
-                                    .size((50*dismissAlpha).dp)
-                                    .graphicsLayer(alpha = dismissAlpha),
-                                tint = MaterialTheme.colorScheme.error
-                            )
-                        }
                     }
                 }
             }

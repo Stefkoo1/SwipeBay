@@ -45,7 +45,8 @@ fun WishlistScreen(viewModel: WishlistViewModel) {
                         product = wishlistItem.product,
                         onSwipeLeft = {},
                         onSwipeRight = {},
-                        onClick = {}
+                        onClick = {},
+                        isSwipeEnabled = false
                     )
                 }
             }

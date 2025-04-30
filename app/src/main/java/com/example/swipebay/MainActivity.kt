@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Icon
@@ -40,11 +41,10 @@ class MainActivity : ComponentActivity() {
                     bottomBar = {
                         BottomNavBar(
                             isLoggedIn = false,
-                            onNavigateToAccount = { navController.navigate("account") },
                             onNavigateToSettings = { navController.navigate("settings") },
                             onNavigateToHome = { navController.navigate("home") },
                             onNavigateToChat = { navController.navigate("chat") },
-                            OnNavigateToWishlist = { navController.navigate("wishlist") }
+                            OnNavigateToWishlist = { navController.navigate("wishlist") },
                         )
                     }
                 ) { innerPadding ->
@@ -64,25 +64,13 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun MainActivity.BottomNavBar(
     isLoggedIn: Boolean,
-    onNavigateToAccount: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToHome: () -> Unit,
     onNavigateToChat: () -> Unit,
     OnNavigateToWishlist: () -> Unit
 ) {
     NavigationBar {
-        NavigationBarItem(
-            selected = false,
-            onClick = onNavigateToAccount,
-            icon = { Icon(Icons.Default.AccountCircle, contentDescription = "Account") },
-            label = { Text("Account") }
-        )
-        NavigationBarItem(
-            selected = false,
-            onClick = onNavigateToSettings,
-            icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
-            label = { Text("Settings") }
-        )
+
         NavigationBarItem(
             selected = false,
             onClick = onNavigateToHome,
@@ -101,5 +89,13 @@ private fun MainActivity.BottomNavBar(
             icon = { Icon(Icons.Default.Favorite, contentDescription = "Wishlist") },
             label = { Text("Wishlist") }
         )
+        NavigationBarItem(
+            selected = false,
+            onClick = onNavigateToSettings,
+            icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
+            label = { Text("Settings") }
+        )
+
+
     }
 }
