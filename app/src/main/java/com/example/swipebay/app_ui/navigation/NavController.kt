@@ -10,8 +10,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.swipebay.app_ui.screens.AuthScreen
 import com.example.swipebay.app_ui.screens.ProductDetailScreen
+import com.example.swipebay.app_ui.screens.SettingsScreen
 import com.example.swipebay.app_ui.screens.SwipeScreen
 import com.example.swipebay.app_ui.screens.WishlistScreen
+import com.example.swipebay.viewmodel.AuthViewModel
 import com.example.swipebay.viewmodel.SwipeViewModel
 import com.example.swipebay.viewmodel.WishlistViewModel
 
@@ -19,26 +21,27 @@ import com.example.swipebay.viewmodel.WishlistViewModel
 fun AppNavGraph(
     navController: NavHostController = rememberNavController(),
     viewModel: SwipeViewModel,
-    wishlistViewModel : WishlistViewModel,
+    authViewModel: AuthViewModel,
+    wishlistViewModel: WishlistViewModel,
     modifier: Modifier = Modifier,
-    wishList: Boolean
+    wishList: Boolean,
+    startDestination: String
 ) {
     NavHost(
         navController = navController,
-        startDestination = "account",
+        startDestination = startDestination,
         modifier = modifier
     ) {
         composable("account") {
             AuthScreen(
-                onLoginClicked = { _, _ -> },
-                onSignUpClicked = { _, _ -> }
+             viewModel = authViewModel, navController = navController
             )
         }
         composable("home") {
             SwipeScreen(viewModel = viewModel, navController = navController, wishlistViewModel = wishlistViewModel)
         }
         composable("settings") {
-            Text("Settings screen")
+            SettingsScreen(navController = navController, authViewModel = authViewModel)
         }
         composable("chat") {
             Text("Chat screen")
@@ -46,6 +49,9 @@ fun AppNavGraph(
         composable("wishlist")
             {
                 WishlistScreen(viewModel =  wishlistViewModel)
+        }
+        composable("sell"){
+            Text("Sell Screen")
         }
         composable(
             "productDetail/{productId}",

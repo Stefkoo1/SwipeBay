@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     kotlin("kapt") // Für Room Annotation Processing
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -53,6 +54,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.firebase.auth.ktx)
 
     // --- Jetpack Compose Dev Tools ---
     debugImplementation(libs.androidx.ui.tooling)
@@ -91,5 +93,7 @@ dependencies {
 
     // --- Coil (Images) ---
     implementation("io.coil-kt:coil-compose:2.4.0")
+
+    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
 
 }
