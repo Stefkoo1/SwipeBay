@@ -7,26 +7,33 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class SwipeViewModel : ViewModel() {
 
-    private val _products = MutableStateFlow(sampleProducts)
+    val _products = MutableStateFlow(sampleProducts)
     val products = _products.asStateFlow()
+
+    internal var lastRemovedProduct: Product? = null
 
     fun removeTopProduct() {
         val current = _products.value.toMutableList()
         if (current.isNotEmpty()) {
+            lastRemovedProduct = current.first()
             current.removeAt(0)
             _products.value = current
         }
     }
+
+    fun undoRemove() {
+        lastRemovedProduct?.let { product ->
+            val current = _products.value.toMutableList()
+            current.add(0, product)
+            _products.value = current
+            lastRemovedProduct = null
+        }
+    }
+
     fun getProductById(productId: String): Product? {
         return _products.value.find { it.id == productId }
     }
 
-    fun addToWishlist(product: Product) {
-
-        val current = _products.value.toMutableList()
-        current.remove(product)
-        _products.value = current
-    }
 
     companion object {
         val sampleProducts = listOf(

@@ -49,7 +49,8 @@ fun SwipeCard(
     onSwipeLeft: () -> Unit,
     onSwipeRight: () -> Unit,
     onClick: () -> Unit,
-    isSwipeEnabled: Boolean
+    isSwipeEnabled: Boolean,
+    isWishlistItem: Boolean = false
 ) {
     var offsetX by remember { mutableStateOf(0f) }
     var visible by remember { mutableStateOf(false) }
@@ -157,6 +158,31 @@ fun SwipeCard(
                         Text(text = product.price, fontSize = 16.sp, color = MaterialTheme.colorScheme.primary)
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(text = product.description, fontSize = 14.sp)
+
+                    }
+                    if (isWishlistItem) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            Text(
+                                text = "Message Seller",
+                                modifier = Modifier
+                                    .clickable { /* TODO: Implement message seller functionality */ }
+                                    .padding(8.dp),
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = "Remove from Wishlist",
+                                modifier = Modifier
+                                    .clickable { /* TODO: Implement remove from wishlist functionality */ }
+                                    .padding(8.dp),
+                                color = MaterialTheme.colorScheme.error,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
             }
