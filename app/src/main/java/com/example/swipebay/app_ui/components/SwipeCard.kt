@@ -131,7 +131,7 @@ fun SwipeCard(
                     .padding(8.dp)
                     .graphicsLayer {
                         translationX = offsetX
-                        rotationZ = offsetX / 60f
+
                         scaleX = 1f - (abs(offsetX) / 3000f).coerceIn(0f, 0.05f)
                         scaleY = 1f - (abs(offsetX) / 3000f).coerceIn(0f, 0.05f)
                     },
