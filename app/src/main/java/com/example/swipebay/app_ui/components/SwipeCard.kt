@@ -145,7 +145,7 @@ fun SwipeCard(
                             .clickable { onClick() }
                     ) {
                         Image(
-                            painter = rememberAsyncImagePainter(model = product.imageUrl),
+                            painter = rememberAsyncImagePainter(model = product.imageUrls.first()),
                             contentDescription = null,
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop

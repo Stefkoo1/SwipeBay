@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+
     kotlin("kapt") // Für Room Annotation Processing
     id("com.google.gms.google-services")
 }
@@ -95,5 +96,7 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.4.0")
 
     implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation ("com.google.android.gms:play-services-base:<latest-version>")
 
 }
