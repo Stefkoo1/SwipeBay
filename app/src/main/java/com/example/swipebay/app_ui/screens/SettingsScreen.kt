@@ -33,7 +33,7 @@ fun SettingsScreen(navController: NavController, authViewModel: AuthViewModel) {
         )
 
         if (!isUserSignedIn) {
-            Button(onClick = { navController.navigate("account") }) {
+            Button(onClick = { navController.navigate("login") }) {
                 Text("Log In / Sign Up")
             }
         } else {
@@ -44,7 +44,7 @@ fun SettingsScreen(navController: NavController, authViewModel: AuthViewModel) {
                     authViewModel.signOut()
                     val prefs = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
                     prefs.edit().putBoolean("keepSignedIn", false).apply()
-                    navController.navigate("account") {
+                    navController.navigate("login") {
                         popUpTo("home") { inclusive = true }
                     }
                 }

@@ -33,7 +33,7 @@ fun AppNavGraph(
         startDestination = startDestination,
         modifier = modifier
     ) {
-        composable("account") {
+        composable("login") {
             AuthScreen(
              viewModel = authViewModel, navController = navController
             )

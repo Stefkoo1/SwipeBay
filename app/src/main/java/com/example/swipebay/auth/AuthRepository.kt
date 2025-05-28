@@ -26,7 +26,7 @@ class AuthRepository {
 
     fun isUserLoggedIn(): Boolean = auth.currentUser != null
 
-    suspend fun signOut(): Result<Unit> {
+    fun signOut(): Result<Unit> {
         return try {
             auth.signOut()
             Result.success(Unit)
