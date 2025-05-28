@@ -99,4 +99,6 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation ("com.google.android.gms:play-services-base:<latest-version>")
 
+    implementation("com.google.accompanist:accompanist-flowlayout:0.30.1")
+
 }

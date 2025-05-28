@@ -7,6 +7,12 @@ import com.google.firebase.firestore.ktx.firestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import android.util.Log
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+
 
 class SwipeViewModel : ViewModel() {
 
@@ -54,4 +60,35 @@ class SwipeViewModel : ViewModel() {
     fun getProductById(productId: String): Product? {
         return _products.value.find { it.id == productId }
     }
+
+    /** Defines which filters the user can set */
+    data class FilterOptions(
+        val minPrice: Int? = null,
+        val maxPrice: Int? = null,
+        val categories: Set<String> = emptySet()
+    )
+
+    /**  Backing state flow for the current filters */
+    private val _filters = MutableStateFlow(FilterOptions())
+    val filters: StateFlow<FilterOptions> = _filters.asStateFlow()
+
+    /**  Combines raw products + filters into a filteredProducts flow */
+    val filteredProducts = combine(
+        _products,
+        _filters
+    ) { list, fopts ->
+        list.filter { product ->
+            val priceInt = product.price.toIntOrNull() ?: return@filter false
+            val okPrice = (fopts.minPrice?.let { priceInt >= it } ?: true)
+                    && (fopts.maxPrice?.let { priceInt <= it } ?: true)
+            val okCat   = fopts.categories.isEmpty() || product.category in fopts.categories
+            okPrice && okCat
+        }
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    /** Call this to apply new filters from the UI */
+    fun updateFilters(newFilters: FilterOptions) {
+        _filters.value = newFilters
+    }
 }
+
