@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Home
@@ -83,10 +84,11 @@ class MainActivity : ComponentActivity() {
                                 onNavigateToSettings = { navController.navigate("settings") },
                                 onNavigateToHome = { navController.navigate("home") },
                                 onNavigateToChat = { navController.navigate("chat") },
-                                OnNavigateToWishlist = { navController.navigate("wishlist") },
-                                OnNavigateToSell = { navController.navigate("sell") },
+                                onNavigateToWishlist = { navController.navigate("wishlist") },
+                                onNavigateToSell = { navController.navigate("sell") },
                                 navController = navController,
-                                wishlistUpdated = wishlistUpdated
+                                wishlistUpdated = wishlistUpdated,
+                                onNavigateToMyItems = {navController.navigate("myItems")}
                             )
                         }
                     }
@@ -117,8 +119,9 @@ private fun MainActivity.BottomNavBar(
     onNavigateToSettings: () -> Unit,
     onNavigateToHome: () -> Unit,
     onNavigateToChat: () -> Unit,
-    OnNavigateToWishlist: () -> Unit,
-    OnNavigateToSell: () -> Unit,
+    onNavigateToWishlist: () -> Unit,
+    onNavigateToSell: () -> Unit,
+    onNavigateToMyItems: () -> Unit,
     navController: NavController,
     wishlistUpdated: Boolean
 ) {
@@ -149,15 +152,21 @@ private fun MainActivity.BottomNavBar(
         )
         NavigationBarItem(
             selected = currentDestination?.route == "sell",
-            onClick = OnNavigateToSell,
+            onClick = onNavigateToSell,
             icon = { Icon(Icons.Default.Add, contentDescription = "Sell") },
             label = { Text("Sell") }
         )
         NavigationBarItem(
             selected = currentDestination?.route == "wishlist",
-            onClick = OnNavigateToWishlist,
+            onClick = onNavigateToWishlist,
             icon = { Icon(Icons.Default.Favorite, contentDescription = "Wishlist", modifier = Modifier.scale(scale)) },
             label = { Text("Wishlist") }
+        )
+        NavigationBarItem(
+            selected = currentDestination?.route == "myItems",
+            onClick = onNavigateToMyItems,
+            icon = { Icon(Icons.Default.AccountCircle, contentDescription = "My Items", modifier = Modifier.scale(scale)) },
+            label = { Text("My Items") }
         )
         NavigationBarItem(
             selected = currentDestination?.route == "settings",

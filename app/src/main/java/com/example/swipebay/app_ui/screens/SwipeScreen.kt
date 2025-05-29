@@ -1,5 +1,7 @@
 package com.example.swipebay.app_ui.screens
 
+import com.google.firebase.auth.FirebaseAuth
+
 import android.R
 import android.R.bool
 import androidx.compose.animation.AnimatedVisibility
@@ -40,9 +42,10 @@ fun SwipeScreen(
     // 2) Collect the wishlist IDs
     val wishlistIds by wishlistViewModel.wishlistIds.collectAsState()
 
-    // 3) Subtract wishlisted out of filtered
+    // 3) Subtract wishlisted out of filtered and exclude current user's own products
     val products = remember(filteredProducts, wishlistIds) {
-        filteredProducts.filter { it.id !in wishlistIds }
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+        filteredProducts.filter { it.id !in wishlistIds && it.sellerId != currentUserId }
     }
 
     var showFilter by remember { mutableStateOf(false) }

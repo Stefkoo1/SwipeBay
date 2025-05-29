@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.swipebay.app_ui.screens.AuthScreen
+import com.example.swipebay.app_ui.screens.MyItemsScreen
 import com.example.swipebay.app_ui.screens.ProductDetailScreen
 import com.example.swipebay.app_ui.screens.SellScreen
 import com.example.swipebay.app_ui.screens.SettingsScreen
@@ -65,6 +66,9 @@ fun AppNavGraph(
         }
         composable("sell") {
             SellScreen(onProductListed = { navController.popBackStack() })
+        }
+        composable("myItems") {
+            MyItemsScreen()
         }
     }
 }
