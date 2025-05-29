@@ -107,4 +107,18 @@ class WishlistViewModel(app: Application) : AndroidViewModel(app) {
     fun resetWishlistUpdated() {
         _wishlistUpdated.value = false
     }
+
+    fun getSellerEmail(sellerId: String, callback: (String?) -> Unit) {
+        Firebase.firestore.collection("users")
+            .whereEqualTo("uid", sellerId)
+            .limit(1)
+            .get()
+            .addOnSuccessListener { result ->
+                val email = result.documents.firstOrNull()?.getString("email")
+                callback(email)
+            }
+            .addOnFailureListener {
+                callback(null)
+            }
+    }
 }

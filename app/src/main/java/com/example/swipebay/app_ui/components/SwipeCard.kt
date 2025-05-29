@@ -1,4 +1,12 @@
 package com.example.swipebay.app_ui.components
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
+
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -35,7 +43,8 @@ fun SwipeCard(
     onClick: () -> Unit,
     isSwipeEnabled: Boolean,
     isWishlistItem: Boolean = false,
-    onRemoveFromWishlist: (() -> Unit)? = null    // 👈 new callback
+    onRemoveFromWishlist: (() -> Unit)? = null,    // 👈 new callback
+    onSellMailToSeller: (() -> Unit)? = null,
 ) {
     var offsetX by remember { mutableStateOf(0f) }
     var visible by remember { mutableStateOf(false) }
@@ -134,14 +143,17 @@ fun SwipeCard(
                     // If this is a wishlist card, show actions
                     if (isWishlistItem) {
                         Spacer(Modifier.height(12.dp))
+                        val context = LocalContext.current
                         Row(
                             Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
                             Text(
-                                "Message Seller",
+                                "Message Seller (E-Mail)",
                                 modifier = Modifier
-                                    .clickable { /* implement later */ }
+                                    .clickable {
+                                        onSellMailToSeller?.invoke()
+                                    }
                                     .padding(8.dp),
                                 fontWeight = FontWeight.Bold
                             )

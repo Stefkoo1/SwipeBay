@@ -14,7 +14,7 @@ data class Product @JvmOverloads constructor(
     var imageUrls: List<String> = emptyList(),
     var region: String = "",
     var tags: List<String> = emptyList(),
-    var title: String = ""
+    var title: String = "",
 ) {
     companion object {
         // your sampleProducts here
