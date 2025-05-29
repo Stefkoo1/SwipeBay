@@ -28,5 +28,6 @@ class AuthViewModel(private val repo: AuthRepository = AuthRepository()) : ViewM
 
     suspend fun signOut() {
         repo.signOut()
+        _authState.value = Result.failure(Exception("Signed out"))
     }
 }

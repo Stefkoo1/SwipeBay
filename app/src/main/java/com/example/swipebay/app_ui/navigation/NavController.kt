@@ -26,7 +26,8 @@ fun AppNavGraph(
     wishlistViewModel: WishlistViewModel,
     modifier: Modifier = Modifier,
     wishList: Boolean,
-    startDestination: String
+    startDestination: String,
+    isUserSignedIn: Boolean
 ) {
     NavHost(
         navController = navController,
@@ -34,9 +35,13 @@ fun AppNavGraph(
         modifier = modifier
     ) {
         composable("login") {
-            AuthScreen(
-             viewModel = authViewModel, navController = navController
-            )
+            if (!isUserSignedIn) {
+                AuthScreen(viewModel = authViewModel, navController = navController)
+            } else {
+                navController.navigate("home") {
+                    popUpTo("login") { inclusive = true }
+                }
+            }
         }
         composable("home") {
             SwipeScreen(viewModel = viewModel, navController = navController, wishlistViewModel = wishlistViewModel)

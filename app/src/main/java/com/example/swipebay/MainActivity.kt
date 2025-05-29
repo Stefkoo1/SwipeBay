@@ -20,7 +20,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -33,6 +32,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.swipebay.viewmodel.SwipeViewModel
 import com.example.swipebay.app_ui.navigation.AppNavGraph
+import com.example.swipebay.app_ui.screens.AuthScreen
 import com.example.swipebay.viewmodel.AuthViewModel
 import com.example.swipebay.viewmodel.WishlistViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -45,8 +45,23 @@ class MainActivity : ComponentActivity() {
         val prefs = getSharedPreferences("auth_prefs", MODE_PRIVATE)
         val keepSignedIn = prefs.getBoolean("keepSignedIn", false)
 
-        val isUserSignedIn = FirebaseAuth.getInstance().currentUser != null
-        val startDestination = if (keepSignedIn && isUserSignedIn) "home" else "login"
+        // removed - no longer needed outside
+        val startDestination = if (keepSignedIn && FirebaseAuth.getInstance().currentUser != null) "home" else "login"
+
+        // FirebaseAuth listener setup
+        val firebaseAuth = FirebaseAuth.getInstance()
+        val authState = mutableStateOf(firebaseAuth.currentUser != null)
+
+        val authListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
+            authState.value = firebaseAuth.currentUser != null
+        }
+        firebaseAuth.addAuthStateListener(authListener)
+
+        lifecycle.addObserver(object : androidx.lifecycle.DefaultLifecycleObserver {
+            override fun onDestroy(owner: androidx.lifecycle.LifecycleOwner) {
+                firebaseAuth.removeAuthStateListener(authListener)
+            }
+        })
 
         setContent {
             val swipeViewModel: SwipeViewModel = viewModel()
@@ -56,33 +71,40 @@ class MainActivity : ComponentActivity() {
             var wishList by remember { mutableStateOf(false) }
             val wishlistUpdated by wishlistViewModel.wishlistUpdated.collectAsState()
 
+            // Use authState with remember
+            val isUserSignedIn by remember { authState }
+
             MaterialTheme {
                 Scaffold(
                     bottomBar = {
-                        BottomNavBar(
-                            isLoggedIn = false,
-                            onNavigateToSettings = { navController.navigate("settings") },
-                            onNavigateToHome = { navController.navigate("home") },
-                            onNavigateToChat = { navController.navigate("chat") },
-                            OnNavigateToWishlist = {
-                                wishlistViewModel.resetWishlistUpdated() // ✅ reset trigger
-                                navController.navigate("wishlist")
-                            },
-                            OnNavigateToSell = {navController.navigate("sell")},
-                            navController = navController,
-                            wishlistUpdated = wishlistUpdated
-                        )
+                        if (isUserSignedIn) {
+                            BottomNavBar(
+                                isLoggedIn = true,
+                                onNavigateToSettings = { navController.navigate("settings") },
+                                onNavigateToHome = { navController.navigate("home") },
+                                onNavigateToChat = { navController.navigate("chat") },
+                                OnNavigateToWishlist = { navController.navigate("wishlist") },
+                                OnNavigateToSell = { navController.navigate("sell") },
+                                navController = navController,
+                                wishlistUpdated = wishlistUpdated
+                            )
+                        }
                     }
                 ) { innerPadding ->
-                    AppNavGraph(
-                        navController = navController,
-                        viewModel = swipeViewModel,
-                        modifier = Modifier.padding(innerPadding),
-                        wishList = wishList,
-                        wishlistViewModel = wishlistViewModel,
-                        authViewModel = authViewModel,
-                        startDestination = startDestination
-                    )
+                    if (isUserSignedIn) {
+                        AppNavGraph(
+                            navController = navController,
+                            viewModel = swipeViewModel,
+                            modifier = Modifier.padding(innerPadding),
+                            wishList = wishList,
+                            wishlistViewModel = wishlistViewModel,
+                            authViewModel = authViewModel,
+                            startDestination = "home",
+                            isUserSignedIn = true
+                        )
+                    } else {
+                        AuthScreen(viewModel = authViewModel, navController = navController)
+                    }
                 }
             }
         }

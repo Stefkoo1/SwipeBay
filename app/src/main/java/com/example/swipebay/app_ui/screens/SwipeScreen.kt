@@ -1,5 +1,7 @@
 package com.example.swipebay.app_ui.screens
 
+import android.R
+import android.R.bool
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -30,7 +32,7 @@ import kotlinx.coroutines.delay
 fun SwipeScreen(
     viewModel: SwipeViewModel,
     navController: NavController,
-    wishlistViewModel: WishlistViewModel
+    wishlistViewModel: WishlistViewModel,
 ) {
     // 1) Collect the filtered products flow:
     val filteredProducts by viewModel.filteredProducts.collectAsState(initial = emptyList())

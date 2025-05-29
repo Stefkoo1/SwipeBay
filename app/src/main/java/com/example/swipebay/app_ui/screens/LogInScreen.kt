@@ -34,19 +34,6 @@ fun AuthScreen(
     var keepSignedIn by remember { mutableStateOf(false) }
     val authState by viewModel.authState.collectAsState()
     val context = LocalContext.current
-
-
-    LaunchedEffect(authState) {
-        authState?.let {
-            if (it.isSuccess) {
-                Toast.makeText(context, "Authentication successful", Toast.LENGTH_SHORT).show()
-                navController.navigate("home")
-            } else {
-                Toast.makeText(context, it.exceptionOrNull()?.message ?: "Unknown error", Toast.LENGTH_LONG).show()
-            }
-        }
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()

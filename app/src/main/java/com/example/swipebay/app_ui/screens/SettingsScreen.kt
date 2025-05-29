@@ -14,6 +14,7 @@ import com.example.swipebay.viewmodel.AuthViewModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import android.content.Context
+import kotlin.math.log
 
 @Composable
 fun SettingsScreen(navController: NavController, authViewModel: AuthViewModel) {
@@ -47,6 +48,7 @@ fun SettingsScreen(navController: NavController, authViewModel: AuthViewModel) {
                     navController.navigate("login") {
                         popUpTo("home") { inclusive = true }
                     }
+
                 }
             }) {
                 Text("Sign out")
