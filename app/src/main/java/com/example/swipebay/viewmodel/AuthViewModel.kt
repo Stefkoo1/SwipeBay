@@ -1,5 +1,6 @@
 package com.example.swipebay.viewmodel
 
+import android.graphics.Region
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.swipebay.auth.AuthRepository
@@ -18,9 +19,9 @@ class AuthViewModel(private val repo: AuthRepository = AuthRepository()) : ViewM
         }
     }
 
-    fun signUp(email: String, password: String) {
+    fun signUp(email: String, password: String, firstName: String, lastName: String, userName: String, region: String) {
         viewModelScope.launch {
-            _authState.value = repo.signUp(email, password)
+            _authState.value = repo.signUp(email, password, firstName, lastName, userName, region)
         }
     }
 

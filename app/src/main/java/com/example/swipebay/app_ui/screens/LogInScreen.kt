@@ -6,18 +6,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Chat
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Icon
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.swipebay.viewmodel.AuthViewModel
 import androidx.navigation.NavHostController
-import android.widget.Toast
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.edit
@@ -27,7 +18,10 @@ fun AuthScreen(
     navController: NavHostController,
     viewModel: AuthViewModel = viewModel()
 ) {
-    var name by remember { mutableStateOf("") }
+    var firstName by remember { mutableStateOf("") }
+    var lastName by remember { mutableStateOf("") }
+    var userName by remember { mutableStateOf("") }
+    var region by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isLogin by remember { mutableStateOf(true) }
@@ -46,9 +40,30 @@ fun AuthScreen(
 
         if (!isLogin) {
             OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
+                value = userName,
+                onValueChange = { userName = it },
+                label = { Text("Username") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = firstName,
+                onValueChange = { firstName = it },
                 label = { Text("Name") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = lastName,
+                onValueChange = { lastName = it },
+                label = { Text("Last name") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = region,
+                onValueChange = { region = it },
+                label = { Text("Region") },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -88,7 +103,7 @@ fun AuthScreen(
                 val prefs = context.getSharedPreferences("auth_prefs", android.content.Context.MODE_PRIVATE)
                 prefs.edit() { putBoolean("keepSignedIn", keepSignedIn) }
                 if (isLogin) viewModel.login(email, password)
-                else viewModel.signUp(email, password)
+                else viewModel.signUp(email, password, firstName, lastName, userName, region)
             },
             modifier = Modifier.fillMaxWidth()
         ) {
