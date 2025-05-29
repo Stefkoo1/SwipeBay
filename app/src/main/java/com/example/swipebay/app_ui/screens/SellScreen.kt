@@ -25,7 +25,6 @@ fun SellScreen(
     val price       by sellViewModel.price.collectAsState()
     val category    by sellViewModel.category.collectAsState()
     val region      by sellViewModel.region.collectAsState()
-    val tags by sellViewModel.tags.collectAsState()
     var categoryExpanded by remember { mutableStateOf(false) }
     var regionExpanded   by remember { mutableStateOf(false) }
 
@@ -131,13 +130,6 @@ fun SellScreen(
         }
         Spacer(Modifier.height(8.dp))
 
-        OutlinedTextField(
-            value = tags,
-            onValueChange = { sellViewModel.onTagsChange(it) },
-            label = { Text("Tags (comma-separated)") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(Modifier.height(8.dp))
 
         Button(
             onClick = {

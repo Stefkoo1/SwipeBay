@@ -21,8 +21,8 @@ class SellViewModel : ViewModel() {
 
     private val _region = MutableStateFlow("")
     val region: StateFlow<String> = _region.asStateFlow()
-    private val _tags = MutableStateFlow("")
-    val tags: StateFlow<String> = _tags.asStateFlow()
+
+
 
     val title: StateFlow<String>       = _title.asStateFlow()
     val description: StateFlow<String> = _description.asStateFlow()
@@ -33,7 +33,7 @@ class SellViewModel : ViewModel() {
     fun onTitleChange(new: String)       { _title.value = new }
     fun onDescriptionChange(new: String) { _description.value = new }
     fun onPriceChange(new: String)       { _price.value = new }
-    fun onTagsChange(new: String) { _tags.value = new }
+
 
 
     fun listProduct() {
@@ -56,7 +56,7 @@ class SellViewModel : ViewModel() {
             timestamp = System.currentTimeMillis(),
             imageUrls = emptyList(), // TODO: replace with real URLs after upload
             region = _region.value,
-            tags = _tags.value.split(","), // or capture from UI if implemented
+
             title = _title.value
         )
 

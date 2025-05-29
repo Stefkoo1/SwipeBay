@@ -126,12 +126,6 @@ private fun MainActivity.BottomNavBar(
             label = { Text("Home") }
         )
         NavigationBarItem(
-            selected = currentDestination?.route == "chat",
-            onClick = onNavigateToChat,
-            icon = { Icon(Icons.Default.Chat, contentDescription = "Chat") },
-            label = { Text("Chat") }
-        )
-        NavigationBarItem(
             selected = currentDestination?.route == "sell",
             onClick = OnNavigateToSell,
             icon = { Icon(Icons.Default.Add, contentDescription = "Sell") },
