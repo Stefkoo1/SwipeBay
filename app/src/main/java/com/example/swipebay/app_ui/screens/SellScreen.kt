@@ -1,6 +1,11 @@
 package com.example.swipebay.app_ui.screens
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuDefaults
@@ -11,9 +16,12 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberAsyncImagePainter
 import com.example.swipebay.viewmodel.SellViewModel
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SellScreen(
@@ -130,6 +138,34 @@ fun SellScreen(
         }
         Spacer(Modifier.height(8.dp))
 
+        val context = LocalContext.current
+        val imageUris by sellViewModel.imageUris.collectAsState()
+        val launcher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetMultipleContents()
+        ) { uris ->
+            sellViewModel.setImageUris(uris)
+        }
+
+        Button(
+            onClick = { launcher.launch("image/*") },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Choose Images")
+        }
+
+        LazyRow(modifier = Modifier.fillMaxWidth()) {
+            items(imageUris) { uri ->
+                Image(
+                    painter = rememberAsyncImagePainter(uri),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .size(100.dp)
+                )
+            }
+        }
+
+        Spacer(Modifier.height(8.dp))
 
         Button(
             onClick = {
@@ -142,4 +178,3 @@ fun SellScreen(
         }
     }
 }
-
