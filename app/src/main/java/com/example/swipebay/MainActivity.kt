@@ -46,9 +46,6 @@ class MainActivity : ComponentActivity() {
         val prefs = getSharedPreferences("auth_prefs", MODE_PRIVATE)
         val keepSignedIn = prefs.getBoolean("keepSignedIn", false)
 
-        // removed - no longer needed outside
-        val startDestination = if (keepSignedIn && FirebaseAuth.getInstance().currentUser != null) "home" else "login"
-
         // FirebaseAuth listener setup
         val firebaseAuth = FirebaseAuth.getInstance()
         val authState = mutableStateOf(firebaseAuth.currentUser != null)

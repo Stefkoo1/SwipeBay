@@ -2,6 +2,7 @@ package com.example.swipebay.viewmodel
 
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -72,7 +73,16 @@ class WishlistViewModel(app: Application) : AndroidViewModel(app) {
                 .addOnFailureListener {
                     db.collection("wishlists").document(userId)
                         .set(mapOf("wishlist" to listOf(product.id)))
+                    Log.d("WishlistViewModel", "${product.title} added to Wishlist!")
                 }
+            val itemRef = db.collection("items").document(product.id)
+            db.runTransaction { transaction ->
+                val snapshot = transaction.get(itemRef)
+                val current = snapshot.getLong("wishlistedBy") ?: 0L
+                transaction.update(itemRef, "wishlistedBy", current + 1)
+            }.addOnFailureListener {
+                Log.e("WishlistViewModel", "Failed to increment wishlistedBy", it)
+            }
             // reset after animation
             delay(500)
             _wishlistUpdated.value = false

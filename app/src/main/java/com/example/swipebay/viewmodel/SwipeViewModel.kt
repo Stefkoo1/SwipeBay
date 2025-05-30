@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 
 class SwipeViewModel : ViewModel() {
@@ -19,40 +20,27 @@ class SwipeViewModel : ViewModel() {
     private val _products = MutableStateFlow<List<Product>>(emptyList())
     val products = _products.asStateFlow()
 
+    // Tracks the currently visible products after filtering and user actions
+    private val _visibleProducts = MutableStateFlow<List<Product>>(emptyList())
+    val visibleProducts: StateFlow<List<Product>> = _visibleProducts
+
     internal var lastRemovedProduct: Product? = null
 
-    init {
-        val db = Firebase.firestore
-        db.collection("items")
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    Log.e("SwipeViewModel", "Error fetching items", error)
-                    return@addSnapshotListener
-                }
-                if (snapshot == null) return@addSnapshotListener
-                val items = snapshot.documents.mapNotNull { doc ->
-                    doc.toObject(Product::class.java)?.apply {
-                        id = doc.id
-                    }
-                }
-                _products.value = items
-            }
-    }
 
     fun removeTopProduct() {
-        val current = _products.value.toMutableList()
+        val current = _visibleProducts.value.toMutableList()
         if (current.isNotEmpty()) {
             lastRemovedProduct = current.first()
             current.removeAt(0)
-            _products.value = current
+            _visibleProducts.value = current
         }
     }
 
     fun undoRemove() {
         lastRemovedProduct?.let { product ->
-            val current = _products.value.toMutableList()
+            val current = _visibleProducts.value.toMutableList()
             current.add(0, product)
-            _products.value = current
+            _visibleProducts.value = current
             lastRemovedProduct = null
         }
     }
@@ -79,12 +67,39 @@ class SwipeViewModel : ViewModel() {
     ) { list, fopts ->
         list.filter { product ->
             val priceInt = product.price.toIntOrNull() ?: return@filter false
-            val okPrice = (fopts.minPrice?.let { priceInt >= it } ?: true)
-                    && (fopts.maxPrice?.let { priceInt <= it } ?: true)
-            val okCat   = fopts.categories.isEmpty() || product.category in fopts.categories
+            val category = product.category?.trim()?.lowercase() ?: ""
+            val okPrice = (fopts.minPrice == null || priceInt >= fopts.minPrice) &&
+                          (fopts.maxPrice == null || priceInt <= fopts.maxPrice)
+            val okCat = fopts.categories.isEmpty() || fopts.categories.any { it.trim().lowercase() == category }
             okPrice && okCat
         }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    init {
+        val db = Firebase.firestore
+        db.collection("items")
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Log.e("SwipeViewModel", "Error fetching items", error)
+                    return@addSnapshotListener
+                }
+                if (snapshot == null) return@addSnapshotListener
+                val items = snapshot.documents.mapNotNull { doc ->
+                    doc.toObject(Product::class.java)?.apply {
+                        id = doc.id
+                    }
+                }
+                Log.d("Firestore", "Fetched ${items.size} items")
+                _products.value = items
+            }
+
+        // Keep _visibleProducts in sync with filteredProducts
+        viewModelScope.launch {
+            filteredProducts.collect {
+                _visibleProducts.value = it
+            }
+        }
+    }
 
     /** Call this to apply new filters from the UI */
     fun updateFilters(newFilters: FilterOptions) {

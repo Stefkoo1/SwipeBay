@@ -38,8 +38,8 @@ import kotlin.math.abs
 @Composable
 fun SwipeCard(
     product: Product,
-    onSwipeLeft: () -> Unit,
-    onSwipeRight: () -> Unit,
+    onSwipeLeft: (Product) -> Unit,
+    onSwipeRight: (Product) -> Unit,
     onClick: () -> Unit,
     isSwipeEnabled: Boolean,
     isWishlistItem: Boolean = false,
@@ -63,16 +63,17 @@ fun SwipeCard(
         exit = fadeOut()
     ) {
         Box(
+
             modifier = Modifier.then(
                 if (isSwipeEnabled) Modifier.pointerInput(Unit) {
                     detectHorizontalDragGestures(
                         onDragEnd = { offsetX = 0f }
                     ) { _, dragAmount ->
                         offsetX += dragAmount
-                        if (offsetX > 700) {
-                            onSwipeRight(); offsetX = 0f
-                        } else if (offsetX < -700) {
-                            onSwipeLeft(); offsetX = 0f
+                        if (offsetX > 500) {
+                            onSwipeRight(product); offsetX = 0f
+                        } else if (offsetX < -500) {
+                            onSwipeLeft(product); offsetX = 0f
                         }
                     }
                 } else Modifier

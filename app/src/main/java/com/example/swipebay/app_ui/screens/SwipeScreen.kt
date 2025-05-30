@@ -4,6 +4,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 import android.R
 import android.R.bool
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -36,16 +37,18 @@ fun SwipeScreen(
     navController: NavController,
     wishlistViewModel: WishlistViewModel,
 ) {
-    // 1) Collect the filtered products flow:
-    val filteredProducts by viewModel.filteredProducts.collectAsState(initial = emptyList())
 
-    // 2) Collect the wishlist IDs
-    val wishlistIds by wishlistViewModel.wishlistIds.collectAsState()
+    // 1) Collect the visible products flow and filter out current user's products:
+    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+    val allProducts by viewModel.visibleProducts.collectAsState()
 
-    // 3) Subtract wishlisted out of filtered and exclude current user's own products
-    val products = remember(filteredProducts, wishlistIds) {
-        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
-        filteredProducts.filter { it.id !in wishlistIds && it.sellerId != currentUserId }
+    val products by remember(allProducts, currentUserId) {
+        derivedStateOf {
+            allProducts.filter { it.sellerId != currentUserId }
+        }
+    }
+    LaunchedEffect(products) {
+        println("Products: ${products.size}")
     }
 
     var showFilter by remember { mutableStateOf(false) }
@@ -97,12 +100,18 @@ fun SwipeScreen(
                 ) {
                     SwipeCard(
                         product = product,
-                        onSwipeLeft = {
-                            wishlistViewModel.addToWishlist(product)
+                        onSwipeLeft = { swipedProduct ->
+                            Log.d("SwipeGesture", "Swiped Left on: ${swipedProduct.title}")
+                            wishlistViewModel.addToWishlist(swipedProduct)
                             viewModel.removeTopProduct()
                             showSnackbar.value = true
+                            Log.d("TopProduct", "Now showing: ${products.getOrNull(1)?.title}")
                         },
-                        onSwipeRight = { viewModel.removeTopProduct() },
+                        onSwipeRight = { swipedProduct ->
+                            Log.d("SwipeGesture", "Swiped Right on: ${swipedProduct.title}")
+                            viewModel.removeTopProduct()
+                            Log.d("TopProduct", "Now showing: ${products.getOrNull(1)?.title}")
+                        },
                         onClick = { navController.navigate("productDetail/${product.id}") },
                         isSwipeEnabled = true
                     )
