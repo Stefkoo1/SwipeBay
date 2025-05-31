@@ -49,6 +49,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.layout.ContentScale
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.colorspace.WhitePoint
 import coil.compose.AsyncImage
 import com.example.swipebay.viewmodel.ProfileViewModel
 import coil.compose.rememberAsyncImagePainter
@@ -123,76 +126,64 @@ fun ProfileScreen() {
                         .padding(16.dp),
                     elevation = CardDefaults.cardElevation(4.dp)
                 ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        if (user.profileImageUrl.isNotEmpty()) {
-                            val profilePainter = rememberAsyncImagePainter(model = user.profileImageUrl)
-                            val profilePainterState = profilePainter.state
-                            Box(
-                                modifier = Modifier
-                                    .size(72.dp)
-                                    .padding(end = 16.dp)
-                            ) {
-                                Image(
-                                    painter = profilePainter,
-                                    contentDescription = "Profile Image",
+                        Box(modifier = Modifier.size(100.dp)) {
+                            if (user.profileImageUrl.isNotEmpty()) {
+                                val profilePainter = rememberAsyncImagePainter(model = user.profileImageUrl)
+                                Box(
                                     modifier = Modifier
                                         .fillMaxSize()
-                                        .clip(CircleShape),
-                                    contentScale = ContentScale.Crop
-                                )
-                                if (profilePainterState is AsyncImagePainter.State.Loading) {
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .clip(CircleShape),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        CircularProgressIndicator(modifier = Modifier.size(20.dp))
-                                    }
-                                }
-                                IconButton(
-                                    onClick = { launcher.launch("image/*") },
-                                    modifier = Modifier
-                                        .align(Alignment.TopEnd)
-                                        .size(25.dp)
-                                        .offset(x = 4.dp, y = (-4).dp)
+                                        .clip(CircleShape)
+                                        .clickable { launcher.launch("image/*") }
                                 ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Edit,
-                                        contentDescription = "Edit Photo",
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier
-                                            .background(
-                                                MaterialTheme.colorScheme.background.copy(alpha = 0.8f),
-                                                CircleShape
-                                            )
-                                            .size(23.dp)
-                                            .padding(2.dp)
+                                    Image(
+                                        painter = profilePainter,
+                                        contentDescription = "Profile Image",
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentScale = ContentScale.Crop
                                     )
                                 }
                             }
                         }
-                        Column {
-                            Text("${user.firstName} ${user.lastName}", style = MaterialTheme.typography.titleMedium)
-                            Text("@${user.username}", style = MaterialTheme.typography.bodyMedium)
-                            Text("Region: ${user.region}", style = MaterialTheme.typography.bodyMedium)
-                            Text("Items: ${myItems.size}", style = MaterialTheme.typography.bodyMedium)
-                            Text("Bio:${user.bio}", style = MaterialTheme.typography.bodyMedium)
-                            Button(
-                                onClick = {
-                                    showEditProfile = true
-                                    editedFirstName = user.firstName
-                                    editedLastName = user.lastName
-                                    editedRegion = user.region
-                                    editedBio = user.bio
-                                },
-                                modifier = Modifier.padding(top = 8.dp)
-                            ) {
-                                Text("Edit Profile")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text("${user.firstName} ${user.lastName}", style = MaterialTheme.typography.titleMedium)
+                        Text(user.bio, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
+
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text("@${user.username}", style = MaterialTheme.typography.titleSmall)
+                                Text("Username", style = MaterialTheme.typography.labelSmall)
                             }
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(user.region, style = MaterialTheme.typography.titleSmall)
+                                Text("Region", style = MaterialTheme.typography.labelSmall)
+                            }
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text("${myItems.size}", style = MaterialTheme.typography.titleSmall)
+                                Text("Items", style = MaterialTheme.typography.labelSmall)
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Button(
+                            onClick = {
+                                showEditProfile = true
+                                editedFirstName = user.firstName
+                                editedLastName = user.lastName
+                                editedRegion = user.region
+                                editedBio = user.bio
+                            }
+                        ) {
+                            Text("Edit Profile")
                         }
                     }
                 }
@@ -321,7 +312,7 @@ fun ProfileScreen() {
                                 Icon(
                                     imageVector = Icons.Default.Edit,
                                     contentDescription = "Bearbeiten",
-                                    tint = MaterialTheme.colorScheme.primary
+                                    tint = MaterialTheme.colorScheme.primary,
                                 )
                             }
                         }
