@@ -42,9 +42,13 @@ fun SwipeScreen(
     val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
     val allProducts by viewModel.visibleProducts.collectAsState()
 
-    val products by remember(allProducts, currentUserId) {
+    val dislikedIds by viewModel.dislikedProductIds.collectAsState()
+
+    val products by remember(allProducts, currentUserId, dislikedIds) {
         derivedStateOf {
-            allProducts.filter { it.sellerId != currentUserId }
+            allProducts.filter {
+                it.sellerId != currentUserId && !dislikedIds.contains(it.id)
+            }
         }
     }
     LaunchedEffect(products) {
@@ -110,6 +114,7 @@ fun SwipeScreen(
                         onSwipeRight = { swipedProduct ->
                             Log.d("SwipeGesture", "Swiped Right on: ${swipedProduct.title}")
                             viewModel.removeTopProduct()
+                            viewModel.dislikeProduct(product)
                             Log.d("TopProduct", "Now showing: ${products.getOrNull(1)?.title}")
                         },
                         onClick = { navController.navigate("productDetail/${product.id}") },
@@ -129,7 +134,10 @@ fun SwipeScreen(
                         shape = CircleShape,
                         color = Color.White,
                         shadowElevation = 4.dp,
-                        modifier = Modifier.clickable { viewModel.removeTopProduct() }
+                        modifier = Modifier.clickable {
+                            viewModel.removeTopProduct()
+                            viewModel.dislikeProduct(product)
+                        }
                     ) {
                         Icon(
                             Icons.Default.Close,

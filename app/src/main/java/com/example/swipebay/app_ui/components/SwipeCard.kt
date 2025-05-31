@@ -19,6 +19,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -83,7 +85,7 @@ fun SwipeCard(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(500.dp)
+                    .height(if (isWishlistItem) 300.dp else 500.dp)
                     .padding(horizontal = 24.dp, vertical = 8.dp)
             ) {
                 Row(
@@ -110,7 +112,7 @@ fun SwipeCard(
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .fillMaxWidth(0.98f)
-                    .height(500.dp)
+                    .height(if (isWishlistItem) 400.dp else 500.dp)
                     .padding(8.dp)
                     .graphicsLayer {
                         translationX = offsetX
@@ -146,26 +148,24 @@ fun SwipeCard(
                         Spacer(Modifier.height(12.dp))
                         val context = LocalContext.current
                         Row(
-                            Modifier.fillMaxWidth(),
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
-                            Text(
-                                "Message Seller (E-Mail)",
+                            Icon(
+                                imageVector = Icons.Default.Email,
+                                contentDescription = "Message Seller",
                                 modifier = Modifier
-                                    .clickable {
-                                        onSellMailToSeller?.invoke()
-                                    }
-                                    .padding(8.dp),
-                                fontWeight = FontWeight.Bold
+                                    .size(28.dp)
+                                    .clickable { onSellMailToSeller?.invoke() }
                             )
-                            Text(
-                                "Remove from Wishlist",
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Remove from Wishlist",
                                 modifier = Modifier
-                                    .clickable {
-                                        onRemoveFromWishlist?.invoke()    // 👈 invoke callback
-                                    }
-                                    .padding(8.dp),
-                                fontWeight = FontWeight.Bold
+                                    .size(28.dp)
+                                    .clickable { onRemoveFromWishlist?.invoke() }
                             )
                         }
                     }

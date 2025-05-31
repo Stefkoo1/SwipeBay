@@ -23,11 +23,25 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Icon
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -138,40 +152,40 @@ private fun MainActivity.BottomNavBar(
         }
     }
 
-    NavigationBar {
+    NavigationBar(
+        containerColor = MaterialTheme.colorScheme.surface,
+        tonalElevation = 4.dp
+    ) {
         val currentDestination = navController.currentBackStackEntryAsState().value?.destination
 
-        NavigationBarItem(
-            selected = currentDestination?.route == "home",
-            onClick = onNavigateToHome,
-            icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-            label = { Text("Home") }
-        )
-        NavigationBarItem(
-            selected = currentDestination?.route == "sell",
-            onClick = onNavigateToSell,
-            icon = { Icon(Icons.Default.Add, contentDescription = "Sell") },
-            label = { Text("Sell") }
-        )
-        NavigationBarItem(
-            selected = currentDestination?.route == "wishlist",
-            onClick = onNavigateToWishlist,
-            icon = { Icon(Icons.Default.Favorite, contentDescription = "Wishlist", modifier = Modifier.scale(scale)) },
-            label = { Text("Wishlist") }
-        )
-        NavigationBarItem(
-            selected = currentDestination?.route == "myItems",
-            onClick = onNavigateToMyItems,
-            icon = { Icon(Icons.Default.AccountCircle, contentDescription = "My Items", modifier = Modifier.scale(scale)) },
-            label = { Text("My Items") }
-        )
-        NavigationBarItem(
-            selected = currentDestination?.route == "settings",
-            onClick = onNavigateToSettings,
-            icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
-            label = { Text("Settings") }
-        )
+        @Composable
+        fun NavIconItem(route: String, icon: ImageVector, label: String, onClick: () -> Unit) {
+            val isSelected = currentDestination?.route == route
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(4.dp)
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f) else Color.Transparent)
+                    .clickable { onClick() }
+                    .padding(vertical = 8.dp, horizontal = 20.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = label,
+                        tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                    )
 
+                }
+            }
+        }
 
+        NavIconItem("home", Icons.Default.Home, "Home", onNavigateToHome)
+        NavIconItem("wishlist", Icons.Default.Favorite, "Wishlist", onNavigateToWishlist)
+        NavIconItem("sell", Icons.Default.Add, "Sell", onNavigateToSell)
+        NavIconItem("myItems", Icons.Default.AccountCircle, "My Items", onNavigateToMyItems)
+        NavIconItem("settings", Icons.Default.Settings, "Settings", onNavigateToSettings)
     }
 }

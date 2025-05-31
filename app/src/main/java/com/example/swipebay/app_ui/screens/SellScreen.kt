@@ -31,6 +31,7 @@ fun SellScreen(
     val title       by sellViewModel.title.collectAsState()
     val description by sellViewModel.description.collectAsState()
     val price       by sellViewModel.price.collectAsState()
+    val condition   by sellViewModel.condition.collectAsState()
     val category    by sellViewModel.category.collectAsState()
     val region      by sellViewModel.region.collectAsState()
     var categoryExpanded by remember { mutableStateOf(false) }
@@ -72,6 +73,40 @@ fun SellScreen(
             label = { Text("Price") },
             modifier = Modifier.fillMaxWidth()
         )
+
+        val conditionOptions = listOf("New", "Used - Like New", "Used - Good", "Used - Fair")
+        var conditionExpanded by remember { mutableStateOf(false) }
+
+        ExposedDropdownMenuBox(
+            expanded = conditionExpanded,
+            onExpandedChange = { conditionExpanded = !conditionExpanded }
+        ) {
+            OutlinedTextField(
+                value = condition,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Condition") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = conditionExpanded) },
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
+            )
+            ExposedDropdownMenu(
+                expanded = conditionExpanded,
+                onDismissRequest = { conditionExpanded = false }
+            ) {
+                conditionOptions.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option) },
+                        onClick = {
+                            sellViewModel.onConditionChange(option)
+                            conditionExpanded = false
+                        }
+                    )
+                }
+            }
+        }
+        Spacer(Modifier.height(8.dp))
 
         ExposedDropdownMenuBox(
             expanded = categoryExpanded,
@@ -133,8 +168,6 @@ fun SellScreen(
                     )
                 }
             }
-
-
         }
         Spacer(Modifier.height(8.dp))
 
@@ -145,14 +178,12 @@ fun SellScreen(
         ) { uris ->
             sellViewModel.setImageUris(uris)
         }
-
         Button(
             onClick = { launcher.launch("image/*") },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Choose Images")
         }
-
         LazyRow(modifier = Modifier.fillMaxWidth()) {
             items(imageUris) { uri ->
                 Image(
@@ -164,9 +195,7 @@ fun SellScreen(
                 )
             }
         }
-
         Spacer(Modifier.height(8.dp))
-
         Button(
             onClick = {
                 sellViewModel.listProduct()

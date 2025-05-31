@@ -32,11 +32,15 @@ class SellViewModel(application: Application) : AndroidViewModel(application) {
     private val _description = MutableStateFlow("")
     private val _price       = MutableStateFlow("")
 
+
     private val _category = MutableStateFlow("")
     val category: StateFlow<String> = _category.asStateFlow()
 
     private val _region = MutableStateFlow("")
     val region: StateFlow<String> = _region.asStateFlow()
+
+    private val _condition = MutableStateFlow("")
+    val condition: StateFlow<String> = _condition.asStateFlow()
 
     private val _imageUris = MutableStateFlow<List<Uri>>(emptyList())
     val imageUris: StateFlow<List<Uri>> = _imageUris.asStateFlow()
@@ -47,8 +51,10 @@ class SellViewModel(application: Application) : AndroidViewModel(application) {
     val title: StateFlow<String>       = _title.asStateFlow()
     val description: StateFlow<String> = _description.asStateFlow()
     val price: StateFlow<String>       = _price.asStateFlow()
+
     fun onCategoryChange(new: String)    { _category.value = new }
     fun onRegionChange(new: String)      { _region.value = new }
+    fun onConditionChange(new: String)   { _condition.value = new }
 
     fun onTitleChange(new: String)       { _title.value = new }
     fun onDescriptionChange(new: String) { _description.value = new }
@@ -93,7 +99,7 @@ class SellViewModel(application: Application) : AndroidViewModel(application) {
                     price = _price.value,
                     description = _description.value,
                     category = _category.value,
-                    condition = "",
+                    condition = _condition.value,
                     location = _region.value,
                     sellerId = currentUser.uid,
                     timestamp = System.currentTimeMillis(),
