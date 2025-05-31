@@ -100,7 +100,6 @@ dependencies {
     implementation("com.google.accompanist:accompanist-flowlayout:0.30.1")
     implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
     implementation("com.google.firebase:firebase-storage")
-    implementation("com.google.android.gms:play-services-base:18.2.0")
 
 }
 

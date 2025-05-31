@@ -1,6 +1,7 @@
 package com.example.swipebay.viewmodel
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.swipebay.app_ui.screens.Item
@@ -29,6 +30,8 @@ class ProfileViewModel : ViewModel() {
 
     private val _isUploadingImage = MutableStateFlow(false)
     val isUploadingImage: StateFlow<Boolean> = _isUploadingImage
+    private val _dislikedItems = MutableStateFlow<List<Item>>(emptyList())
+    val dislikedItems: StateFlow<List<Item>> = _dislikedItems
 
     init {
         fetchUserInfo()
@@ -66,14 +69,14 @@ class ProfileViewModel : ViewModel() {
                     _items.value = snapshot.documents.mapNotNull { doc ->
                         val title = doc.getString("title") ?: ""
                         val description = doc.getString("description") ?: ""
-                        val price = doc.get("price")?.toString() ?: ""
+                        val price = doc.get("price") ?: 0.00
                         val imageUrls = doc.get("imageUrls") as? List<String> ?: emptyList()
                         val wishlistedBy = (doc.getLong("wishlistedBy") ?: 0L).toInt()
                         Item(
                             documentId = doc.id,
                             title = title,
                             description = description,
-                            price = price,
+                            price = price as Double,
                             imageUrls = imageUrls,
                             wishlistedBy = wishlistedBy
                         )
@@ -141,7 +144,7 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
-    fun editItem(item: Item, newTitle: String, newDescription: String, newPrice: String) {
+    fun editItem(item: Item, newTitle: String, newDescription: String, newPrice: Double) {
         userId?.let {
             FirebaseFirestore.getInstance().collection("items")
                 .document(item.documentId)
@@ -184,6 +187,49 @@ class ProfileViewModel : ViewModel() {
             }.addOnFailureListener {
                 it.printStackTrace()
             }
+        }
+    }
+    fun fetchDislikedItems() {
+        Log.d("ProfileViewModel", "Fetching disliked items…")
+
+        userId?.let { uid ->
+            FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(uid)
+                .collection("disliked")
+                .get()
+                .addOnSuccessListener { snapshot ->
+                    val items = snapshot.documents.mapNotNull { doc ->
+                        val title = doc.getString("title") ?: return@mapNotNull null
+                        val description = doc.getString("description") ?: ""
+                        val price = doc.getDouble("price") ?: 0.0
+                        val imageUrls = doc.get("imageUrls") as? List<String> ?: emptyList()
+                        val wishlistedBy = (doc.getLong("wishlistedBy") ?: 0L).toInt()
+                        Item(
+                            documentId = doc.id,
+                            title = title,
+                            description = description,
+                            price = price.toDouble(),
+                            imageUrls = imageUrls,
+                            wishlistedBy = wishlistedBy
+                        )
+                    }
+                    _dislikedItems.value = items
+                }
+        }
+    }
+
+    fun removeDislikedItem(item: Item) {
+        userId?.let { uid ->
+            FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(uid)
+                .collection("disliked")
+                .document(item.documentId)
+                .delete()
+                .addOnSuccessListener {
+                    fetchDislikedItems()
+                }
         }
     }
 }

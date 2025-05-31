@@ -33,11 +33,11 @@ class SwipeViewModel : ViewModel() {
     internal var lastRemovedProduct: Product? = null
 
 
-    fun removeTopProduct() {
+    fun removeProduct(product: Product) {
+        Log.d("SwipeViewModel", "removing Top product")
         val current = _visibleProducts.value.toMutableList()
-        if (current.isNotEmpty()) {
-            lastRemovedProduct = current.first()
-            current.removeAt(0)
+        if (current.removeIf { it.id == product.id }) {
+            lastRemovedProduct = product
             _visibleProducts.value = current
         }
     }
@@ -73,7 +73,7 @@ class SwipeViewModel : ViewModel() {
         dislikedProductIds
     ) { list, fopts, disliked ->
         list.filter { product ->
-            val priceInt = product.price.toIntOrNull() ?: return@filter false
+            val priceInt = product.price
             val category = product.category?.trim()?.lowercase() ?: ""
             val okPrice = (fopts.minPrice == null || priceInt >= fopts.minPrice) &&
                           (fopts.maxPrice == null || priceInt <= fopts.maxPrice)
@@ -140,7 +140,17 @@ class SwipeViewModel : ViewModel() {
             .document(userId)
             .collection("disliked")
             .document(product.id)
-            .set(mapOf("dislikedAt" to Timestamp.now()))
+            .set(
+                mapOf(
+                    "dislikedAt" to Timestamp.now(),
+                    "title" to product.title,
+                    "description" to product.description,
+                    "price" to product.price,
+                    "imageUrls" to product.imageUrls,
+                    "category" to product.category,
+                    "sellerId" to product.sellerId
+                )
+            )
             .addOnSuccessListener {
                 Log.d("SwipeViewModel", "Disliked product ${product.id}")
             }

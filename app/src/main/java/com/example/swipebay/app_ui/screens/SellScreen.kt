@@ -68,8 +68,11 @@ fun SellScreen(
 
 
         OutlinedTextField(
-            value = price,
-            onValueChange = { sellViewModel.onPriceChange(it) },
+            value = price.toString(),
+            onValueChange = {
+                val parsed = it
+                if (true) sellViewModel.onPriceChange(parsed)
+            },
             label = { Text("Price") },
             modifier = Modifier.fillMaxWidth()
         )

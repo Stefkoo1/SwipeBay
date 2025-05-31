@@ -2,6 +2,7 @@ package com.example.swipebay.app_ui.screens
 
 
 import android.net.Uri
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -51,6 +52,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.colorspace.WhitePoint
 import coil.compose.AsyncImage
 import com.example.swipebay.viewmodel.ProfileViewModel
@@ -61,7 +63,7 @@ data class Item(
     val documentId: String = "",
     val title: String = "",
     val description: String = "",
-    val price: String = "",
+    val price: Double = 0.0,
     val wishlistedBy: Int = 0,
     val imageUrls: List<String> = emptyList()
 )
@@ -104,6 +106,8 @@ fun ProfileScreen() {
     var editedLastName by remember { mutableStateOf("") }
     var editedRegion by remember { mutableStateOf("") }
     var editedBio by remember { mutableStateOf("") }
+
+    var showDislikedDialog by remember { mutableStateOf(false) }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -161,29 +165,39 @@ fun ProfileScreen() {
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("@${user.username}", style = MaterialTheme.typography.titleSmall)
-                                Text("Username", style = MaterialTheme.typography.labelSmall)
+                                Text("Username", style = MaterialTheme.typography.labelSmall, modifier = Modifier.alpha(0.5f))
                             }
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(user.region, style = MaterialTheme.typography.titleSmall)
-                                Text("Region", style = MaterialTheme.typography.labelSmall)
+                                Text("Region", style = MaterialTheme.typography.labelSmall, modifier = Modifier.alpha(0.5f))
                             }
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("${myItems.size}", style = MaterialTheme.typography.titleSmall)
-                                Text("Items", style = MaterialTheme.typography.labelSmall)
+                                Text("Items", style = MaterialTheme.typography.labelSmall, modifier = Modifier.alpha(0.5f))
                             }
                         }
 
                         Spacer(modifier = Modifier.height(12.dp))
-                        Button(
-                            onClick = {
-                                showEditProfile = true
-                                editedFirstName = user.firstName
-                                editedLastName = user.lastName
-                                editedRegion = user.region
-                                editedBio = user.bio
-                            }
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            Text("Edit Profile")
+                            Button(
+                                onClick = {
+                                    showEditProfile = true
+                                    editedFirstName = user.firstName
+                                    editedLastName = user.lastName
+                                    editedRegion = user.region
+                                    editedBio = user.bio
+                                }
+                            ) {
+                                Text("Edit Profile")
+                            }
+                            Button(onClick = {
+                                viewModel.fetchDislikedItems()
+                                showDislikedDialog = true
+                            }) {
+                                Text("Disliked")
+                            }
                         }
                     }
                 }
@@ -307,7 +321,7 @@ fun ProfileScreen() {
                                 itemToEdit = item
                                 editedTitle = item.title
                                 editedDescription = item.description
-                                editedPrice = item.price
+                                editedPrice = item.price.toString()
                             }) {
                                 Icon(
                                     imageVector = Icons.Default.Edit,
@@ -389,7 +403,7 @@ fun ProfileScreen() {
                 },
                 confirmButton = {
                     TextButton(onClick = {
-                        viewModel.editItem(item, editedTitle, editedDescription, editedPrice)
+                        viewModel.editItem(item, editedTitle, editedDescription, editedPrice.toDouble())
                         itemToEdit = null
                     }) {
                         Text("Save")
@@ -451,6 +465,39 @@ fun ProfileScreen() {
                 }
             )
         }
+        // ↓ Füge hier den disliked modal ein:
+        val dislikedItems by viewModel.dislikedItems.collectAsState()
+
+        if (showDislikedDialog) {
+            AlertDialog(
+                onDismissRequest = { showDislikedDialog = false },
+                title = { Text("Disliked Products") },
+                text = {
+
+                    LazyColumn {
+                        items(dislikedItems.size) { index ->
+                            val item = dislikedItems[index]
+                            Column(modifier = Modifier.padding(8.dp)) {
+                                Text(text = item.title, style = MaterialTheme.typography.titleSmall)
+                                Button(onClick = {
+                                    viewModel.removeDislikedItem(item)
+                                }) {
+                                    Text("Remove from Disliked")
+                                }
+                            }
+                        }
+                    }
+                },
+                confirmButton = {
+                    TextButton(onClick = { showDislikedDialog = false }) {
+                        Text("Close")
+                    }
+                }
+            )
+        }
+
     }
 }
+
+
 

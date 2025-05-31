@@ -4,7 +4,6 @@ import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.os.Build
-import androidx.annotation.RequiresApi
 import android.provider.MediaStore
 import java.io.ByteArrayOutputStream
 
@@ -96,7 +95,7 @@ class SellViewModel(application: Application) : AndroidViewModel(application) {
 
                 val newProduct = Product(
                     id = "",
-                    price = _price.value,
+                    price = _price.value.toDouble() ,
                     description = _description.value,
                     category = _category.value,
                     condition = _condition.value,

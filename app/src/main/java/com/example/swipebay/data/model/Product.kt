@@ -4,7 +4,7 @@ import kotlin.jvm.JvmOverloads
 
 data class Product @JvmOverloads constructor(
     var id: String = "",
-    var price: String = "",
+    var price: Double = 0.00,
     var description: String = "",
     var category: String = "",
     var condition: String = "", // e.g., "New", "Used - Like New", etc.

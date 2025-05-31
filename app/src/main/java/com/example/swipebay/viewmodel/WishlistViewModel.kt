@@ -99,6 +99,18 @@ class WishlistViewModel(app: Application) : AndroidViewModel(app) {
             val userId = KtxFirebase.auth.currentUser?.uid ?: return@launch
             db.collection("wishlists").document(userId)
                 .update("wishlist", FieldValue.arrayRemove(productId))
+            // Also remove from user's disliked collection if present
+            db.collection("users")
+                .document(userId)
+                .collection("disliked")
+                .document(productId)
+                .delete()
+                .addOnSuccessListener {
+                    Log.d("WishlistViewModel", "Removed $productId from disliked collection")
+                }
+                .addOnFailureListener {
+                    Log.e("WishlistViewModel", "Failed to remove $productId from disliked collection", it)
+                }
         }
     }
 

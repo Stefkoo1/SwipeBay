@@ -26,6 +26,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -138,36 +139,36 @@ fun SwipeCard(
                     }
                     // Text
                     Column(Modifier.padding(16.dp)) {
-                        Text(product.title, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                        Text(product.price, fontSize = 16.sp)
-                        Text(product.description, fontSize = 14.sp)
-                    }
-
-                    // If this is a wishlist card, show actions
-                    if (isWishlistItem) {
-                        Spacer(Modifier.height(12.dp))
-                        val context = LocalContext.current
                         Row(
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp),
-                            horizontalArrangement = Arrangement.SpaceEvenly
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Email,
-                                contentDescription = "Message Seller",
-                                modifier = Modifier
-                                    .size(28.dp)
-                                    .clickable { onSellMailToSeller?.invoke() }
-                            )
-                            Icon(
-                                imageVector = Icons.Default.Delete,
-                                contentDescription = "Remove from Wishlist",
-                                modifier = Modifier
-                                    .size(28.dp)
-                                    .clickable { onRemoveFromWishlist?.invoke() }
-                            )
+                            Text(product.title, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                            if (isWishlistItem) {
+                                val context = LocalContext.current
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Email,
+                                        contentDescription = "Message Seller",
+                                        modifier = Modifier
+                                            .size(20.dp)
+                                            .clickable { onSellMailToSeller?.invoke() }
+                                    )
+                                    Icon(
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = "Remove from Wishlist",
+                                        modifier = Modifier
+                                            .size(20.dp)
+                                            .clickable { onRemoveFromWishlist?.invoke() }
+                                    )
+                                }
+                            }
                         }
+                        Text("${product.price}", fontSize = 16.sp)
+                        Text(product.description, fontSize = 14.sp)
                     }
                 }
             }

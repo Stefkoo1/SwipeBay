@@ -95,92 +95,105 @@ fun SwipeScreen(
             contentAlignment = Alignment.Center
         ) {
             if (products.isNotEmpty()) {
-                val product = products.first()
+                val currentProduct = products.firstOrNull()
+                if (cardVisible.value && currentProduct != null) {
 
-                androidx.compose.animation.AnimatedVisibility(
-                    visible = cardVisible.value,
-                    enter = fadeIn() + scaleIn() + slideInVertically { it },
-                    exit = fadeOut()
-                ) {
-                    SwipeCard(
-                        product = product,
-                        onSwipeLeft = { swipedProduct ->
-                            Log.d("SwipeGesture", "Swiped Left on: ${swipedProduct.title}")
-                            wishlistViewModel.addToWishlist(swipedProduct)
-                            viewModel.removeTopProduct()
-                            showSnackbar.value = true
-                            Log.d("TopProduct", "Now showing: ${products.getOrNull(1)?.title}")
-                        },
-                        onSwipeRight = { swipedProduct ->
-                            Log.d("SwipeGesture", "Swiped Right on: ${swipedProduct.title}")
-                            viewModel.removeTopProduct()
-                            viewModel.dislikeProduct(product)
-                            Log.d("TopProduct", "Now showing: ${products.getOrNull(1)?.title}")
-                        },
-                        onClick = { navController.navigate("productDetail/${product.id}") },
-                        isSwipeEnabled = true
-                    )
-                }
-
-                // Dismiss
-                Box(
-                    Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(24.dp)
-                        .size(56.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Surface(
-                        shape = CircleShape,
-                        color = Color.White,
-                        shadowElevation = 4.dp,
-                        modifier = Modifier.clickable {
-                            viewModel.removeTopProduct()
-                            viewModel.dislikeProduct(product)
-                        }
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = true,
+                        enter = fadeIn() + scaleIn() + slideInVertically { it },
+                        exit = fadeOut()
                     ) {
-                        Icon(
-                            Icons.Default.Close,
-                            contentDescription = "Dismiss",
-                            tint = Color.Red,
-                            modifier = Modifier
-                                .padding(12.dp)
-                                .size(24.dp)
+                        SwipeCard(
+                            product = currentProduct,
+                            onSwipeLeft = { swipedProduct ->
+                                Log.d("SwipeGesture", "Swiped Left on: ${swipedProduct.title}")
+                                wishlistViewModel.addToWishlist(currentProduct)
+                                viewModel.removeProduct(currentProduct)
+                                viewModel.dislikeProduct(currentProduct)
+                                showSnackbar.value = true
+                                Log.d("TopProduct", "Now showing: ${products.getOrNull(1)?.title}")
+                            },
+                            onSwipeRight = { swipedProduct ->
+                                Log.d("SwipeGesture", "Swiped Right on: ${swipedProduct.title}")
+                                viewModel.removeProduct(currentProduct)
+                                viewModel.dislikeProduct(currentProduct)
+
+                                Log.d("TopProduct", "Now showing: ${products.getOrNull(1)?.title}")
+                            },
+                            onClick = { navController.navigate("productDetail/${currentProduct.id}") },
+                            isSwipeEnabled = true
                         )
                     }
-                }
 
-                // Like
-                Box(
-                    Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(24.dp)
-                        .size(56.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Surface(
-                        shape = CircleShape,
-                        color = Color.White,
-                        shadowElevation = 4.dp,
-                        modifier = Modifier.clickable {
-                            wishlistViewModel.addToWishlist(product)
-                            viewModel.removeTopProduct()
-                            showSnackbar.value = true
-                        }
+                    // Dismiss button block
+                    Box(
+                        Modifier
+                            .align(Alignment.BottomStart)
+                            .padding(24.dp)
+                            .size(56.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Icon(
-                            Icons.Default.Favorite,
-                            contentDescription = "Like",
-                            tint = Color(0xFFE91E63),
-                            modifier = Modifier
-                                .padding(12.dp)
-                                .size(24.dp)
-                        )
+                        Surface(
+                            shape = CircleShape,
+                            color = Color.White,
+                            shadowElevation = 4.dp,
+                            modifier = Modifier.clickable {
+                                viewModel.removeProduct(currentProduct)
+                                viewModel.dislikeProduct(currentProduct)
+                            }
+                        ) {
+                            Icon(
+                                Icons.Default.Close,
+                                contentDescription = "Dismiss",
+                                tint = Color.Red,
+                                modifier = Modifier
+                                    .padding(12.dp)
+                                    .size(24.dp)
+                            )
+                        }
+                    }
+
+                    // Like button block
+                    Box(
+                        Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(24.dp)
+                            .size(56.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Surface(
+                            shape = CircleShape,
+                            color = Color.White,
+                            shadowElevation = 4.dp,
+                            modifier = Modifier.clickable {
+                                wishlistViewModel.addToWishlist(currentProduct)
+                                viewModel.dislikeProduct(currentProduct)
+                                viewModel.removeProduct(currentProduct)
+                                showSnackbar.value = true
+                            }
+                        ) {
+                            Icon(
+                                Icons.Default.Favorite,
+                                contentDescription = "Like",
+                                tint = Color(0xFFE91E63),
+                                modifier = Modifier
+                                    .padding(12.dp)
+                                    .size(24.dp)
+                            )
+                        }
                     }
                 }
-            } else {
-                Text("Keine Produkte mehr!")
-            }
+            }  else {
+        if (!cardVisible.value) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(48.dp)
+                    .align(Alignment.Center)
+            )
+        } else {
+            Text("Keine Produkte mehr!")
+        }
+    }
         }
 
         // ─── “Added to Wishlist” Snackbar ───────────────────────────

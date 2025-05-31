@@ -77,7 +77,7 @@ fun ProductDetailScreen(productId: String, viewModel: SwipeViewModel, navControl
             }
 
             Text(text = product.title, style = MaterialTheme.typography.headlineMedium)
-            Text(text = product.price + "€", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary)
+            Text(text = "${product.price}", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary)
             Text(text = product.description, style = MaterialTheme.typography.bodyMedium)
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
