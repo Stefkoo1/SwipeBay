@@ -137,6 +137,7 @@ fun SwipeCard(
                             modifier = Modifier.fillMaxSize()
                         )
                     }
+
                     // Text
                     Column(Modifier.padding(16.dp)) {
                         Row(

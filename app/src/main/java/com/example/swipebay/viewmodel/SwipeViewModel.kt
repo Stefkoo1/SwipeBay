@@ -1,40 +1,29 @@
 package com.example.swipebay.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.example.swipebay.data.model.Product
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.firestore.ktx.firestore
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import android.util.Log
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
+import com.example.swipebay.data.model.Product
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
-
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 class SwipeViewModel : ViewModel() {
 
     private val _products = MutableStateFlow<List<Product>>(emptyList())
-    val products = _products.asStateFlow()
+    val products: StateFlow<List<Product>> = _products.asStateFlow()
 
-    // Tracks the set of disliked product IDs for the current user
     private val _dislikedProductIds = MutableStateFlow<Set<String>>(emptySet())
     val dislikedProductIds: StateFlow<Set<String>> = _dislikedProductIds.asStateFlow()
 
-    // Tracks the currently visible products after filtering and user actions
     private val _visibleProducts = MutableStateFlow<List<Product>>(emptyList())
     val visibleProducts: StateFlow<List<Product>> = _visibleProducts
 
     internal var lastRemovedProduct: Product? = null
 
-
     fun removeProduct(product: Product) {
-        Log.d("SwipeViewModel", "removing Top product")
         val current = _visibleProducts.value.toMutableList()
         if (current.removeIf { it.id == product.id }) {
             lastRemovedProduct = product
@@ -55,53 +44,73 @@ class SwipeViewModel : ViewModel() {
         return _products.value.find { it.id == productId }
     }
 
-    /** Defines which filters the user can set */
+    /**
+     * Definiert, welche Filter der Nutzer setzen kann:
+     *  • minPrice / maxPrice
+     *  • categories (z.B. Electronics, Home, …)
+     *  • conditions (z.B. New, Used – Like New, …)
+     *  • regions (z.B. Vienna, Salzburg, …)
+     */
     data class FilterOptions(
         val minPrice: Int? = null,
         val maxPrice: Int? = null,
-        val categories: Set<String> = emptySet()
+        val categories: Set<String> = emptySet(),
+        val conditions: Set<String> = emptySet(),
+        val regions: Set<String> = emptySet()
     )
 
-    /**  Backing state flow for the current filters */
+    // Backing-Flow für die aktuellen Filter-Werte
     private val _filters = MutableStateFlow(FilterOptions())
     val filters: StateFlow<FilterOptions> = _filters.asStateFlow()
 
-    /**  Combines raw products + filters into a filteredProducts flow, also filters out disliked products */
-    val filteredProducts = combine(
+    /**
+     * Kombiniert Roh-Produkte (_products) + _filters + dislikedProductIds
+     * und liefert nur jene Produkte, die **alle** Kriterien erfüllen.
+     */
+    val filteredProducts: StateFlow<List<Product>> = combine(
         _products,
         _filters,
         dislikedProductIds
     ) { list, fopts, disliked ->
         list.filter { product ->
-            val priceInt = product.price
-            val category = product.category?.trim()?.lowercase() ?: ""
+            // 1) Preis-Check
+            val priceInt = product.price.toInt()
             val okPrice = (fopts.minPrice == null || priceInt >= fopts.minPrice) &&
-                          (fopts.maxPrice == null || priceInt <= fopts.maxPrice)
-            val okCat = fopts.categories.isEmpty() || fopts.categories.any { it.trim().lowercase() == category }
+                    (fopts.maxPrice == null || priceInt <= fopts.maxPrice)
+
+            // 2) Kategorie-Check (falls Filter gesetzt)
+            val category = product.category.trim()
+            val okCat = fopts.categories.isEmpty() || fopts.categories.contains(category)
+
+            // 3) Zustand-Check (falls Filter gesetzt)
+            val okCondition = fopts.conditions.isEmpty() || fopts.conditions.contains(product.condition)
+
+            // 4) Region-Check (falls Filter gesetzt)
+            val okRegion = fopts.regions.isEmpty() || fopts.regions.contains(product.region)
+
+            // 5) Nicht bereits “disliked”
             val notDisliked = !disliked.contains(product.id)
-            okPrice && okCat && notDisliked
+
+            okPrice && okCat && okCondition && okRegion && notDisliked
         }
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     init {
+        // Firestore-Listener: Alle Produkte (items) in _products laden
         val db = Firebase.firestore
         db.collection("items")
             .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    Log.e("SwipeViewModel", "Error fetching items", error)
-                    return@addSnapshotListener
-                }
+                if (error != null) return@addSnapshotListener
                 if (snapshot == null) return@addSnapshotListener
+
                 val items = snapshot.documents.mapNotNull { doc ->
-                    doc.toObject(Product::class.java)?.apply {
-                        id = doc.id
-                    }
+                    doc.toObject(Product::class.java)?.apply { id = doc.id }
                 }
-                Log.d("Firestore", "Fetched ${items.size} items")
                 _products.value = items
             }
 
-        // Listen to disliked products for the current user
+        // Firestore-Listener: Disliked-Produkte für aktuellen User
         val auth = FirebaseAuth.getInstance()
         val userId = auth.currentUser?.uid
         if (userId != null) {
@@ -109,10 +118,7 @@ class SwipeViewModel : ViewModel() {
                 .document(userId)
                 .collection("disliked")
                 .addSnapshotListener { snapshot, error ->
-                    if (error != null) {
-                        Log.e("SwipeViewModel", "Error fetching disliked products", error)
-                        return@addSnapshotListener
-                    }
+                    if (error != null) return@addSnapshotListener
                     if (snapshot != null) {
                         val ids = snapshot.documents.mapNotNull { it.id }.toSet()
                         _dislikedProductIds.value = ids
@@ -120,19 +126,21 @@ class SwipeViewModel : ViewModel() {
                 }
         }
 
-        // Keep _visibleProducts in sync with filteredProducts
         viewModelScope.launch {
-            filteredProducts.collect {
-                _visibleProducts.value = it
+            filteredProducts.collect { filteredList ->
+                _visibleProducts.value = filteredList
             }
         }
     }
 
-    /** Call this to apply new filters from the UI */
+    /** Vom UI aufgerufene Funktion: Setze neue Filter-Werte */
     fun updateFilters(newFilters: FilterOptions) {
         _filters.value = newFilters
     }
 
+    /**
+     * Markiere ein Produkt als “disliked” (füge es in die Firestore-Subcollection „disliked“ ein)
+     */
     fun dislikeProduct(product: Product) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val db = Firebase.firestore
@@ -142,21 +150,18 @@ class SwipeViewModel : ViewModel() {
             .document(product.id)
             .set(
                 mapOf(
-                    "dislikedAt" to Timestamp.now(),
-                    "title" to product.title,
+                    "dislikedAt"  to Timestamp.now(),
+                    "title"       to product.title,
                     "description" to product.description,
-                    "price" to product.price,
-                    "imageUrls" to product.imageUrls,
-                    "category" to product.category,
-                    "sellerId" to product.sellerId
+                    "price"       to product.price,
+                    "imageUrls"   to product.imageUrls,
+                    "category"    to product.category,
+                    "condition"   to product.condition,
+                    "region"      to product.region,
+                    "sellerId"    to product.sellerId
                 )
             )
-            .addOnSuccessListener {
-                Log.d("SwipeViewModel", "Disliked product ${product.id}")
-            }
-            .addOnFailureListener {
-                Log.e("SwipeViewModel", "Failed to dislike product ${product.id}", it)
-            }
+            .addOnSuccessListener { /* optional: Erfolg loggen */ }
+            .addOnFailureListener { /* optional: Fehler loggen */ }
     }
 }
-
