@@ -23,19 +23,16 @@ class SwipeViewModel : ViewModel() {
 
     internal var lastRemovedProduct: Product? = null
 
-    fun removeProduct(product: Product) {
-        val current = _visibleProducts.value.toMutableList()
-        if (current.removeIf { it.id == product.id }) {
+    fun removeProduct(product: Product, wasDisliked: Boolean) {
+        if (wasDisliked) {
             lastRemovedProduct = product
-            _visibleProducts.value = current
+            _dislikedProductIds.value = _dislikedProductIds.value + product.id
         }
     }
 
     fun undoRemove() {
         lastRemovedProduct?.let { product ->
-            val current = _visibleProducts.value.toMutableList()
-            current.add(0, product)
-            _visibleProducts.value = current
+            _dislikedProductIds.value = _dislikedProductIds.value - product.id
             lastRemovedProduct = null
         }
     }

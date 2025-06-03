@@ -98,13 +98,13 @@ fun SwipeScreen(
                                 onSwipeLeft = { swipedProduct ->
                                     Log.d("SwipeGesture", "Swiped Left on: ${swipedProduct.title}")
                                     wishlistViewModel.addToWishlist(currentProduct)
-                                    viewModel.removeProduct(currentProduct)
+                                    viewModel.removeProduct(currentProduct, wasDisliked = true)
                                     viewModel.dislikeProduct(currentProduct)
                                     showSnackbar.value = true
                                 },
                                 onSwipeRight = { swipedProduct ->
                                     Log.d("SwipeGesture", "Swiped Right on: ${swipedProduct.title}")
-                                    viewModel.removeProduct(currentProduct)
+                                    viewModel.removeProduct(currentProduct, wasDisliked = false)
                                     viewModel.dislikeProduct(currentProduct)
                                 },
                                 onClick = { navController.navigate("productDetail/${currentProduct.id}") },
@@ -125,7 +125,7 @@ fun SwipeScreen(
                                 color = Color.White,
                                 shadowElevation = 4.dp,
                                 modifier = Modifier.clickable {
-                                    viewModel.removeProduct(currentProduct)
+                                    viewModel.removeProduct(currentProduct, wasDisliked = true)
                                     viewModel.dislikeProduct(currentProduct)
                                 }
                             ) {
@@ -155,7 +155,7 @@ fun SwipeScreen(
                                 modifier = Modifier.clickable {
                                     wishlistViewModel.addToWishlist(currentProduct)
                                     viewModel.dislikeProduct(currentProduct)
-                                    viewModel.removeProduct(currentProduct)
+                                    viewModel.removeProduct(currentProduct, wasDisliked = false)
                                     showSnackbar.value = true
                                 }
                             ) {
