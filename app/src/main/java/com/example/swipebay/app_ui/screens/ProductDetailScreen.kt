@@ -6,38 +6,41 @@ import java.util.Locale
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.example.swipebay.R
 import com.example.swipebay.viewmodel.SwipeViewModel
 import androidx.navigation.NavController
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.layout.Spacer
-
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.font.FontStyle
 
-
 @Composable
-fun ProductDetailScreen(productId: String, viewModel: SwipeViewModel, navController: NavController) {
+fun ProductDetailScreen(
+    productId: String,
+    viewModel: SwipeViewModel,
+    navController: NavController
+) {
     val product = viewModel.getProductById(productId)
     if (product == null) {
-        Text("Product not found", modifier = Modifier.padding(16.dp))
+        Text(stringResource(id = R.string.product_not_found), modifier = Modifier.padding(16.dp))
         return
     }
     Card(
@@ -55,7 +58,7 @@ fun ProductDetailScreen(productId: String, viewModel: SwipeViewModel, navControl
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             IconButton(onClick = { navController.popBackStack() }) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                Icon(Icons.Default.ArrowBack, contentDescription = stringResource(id = R.string.back_button))
             }
             if (product.imageUrls.isNotEmpty()) {
                 LazyRow(
@@ -77,7 +80,11 @@ fun ProductDetailScreen(productId: String, viewModel: SwipeViewModel, navControl
             }
 
             Text(text = product.title, style = MaterialTheme.typography.headlineMedium)
-            Text(text = "${product.price}", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary)
+            Text(
+                text = stringResource(id = R.string.product_price_format, product.price),
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.primary
+            )
             Text(text = product.description, style = MaterialTheme.typography.bodyMedium)
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -103,7 +110,6 @@ fun ProductDetailScreen(productId: String, viewModel: SwipeViewModel, navControl
                 }
             }
 
-
             Text(
                 text = product.region,
                 style = MaterialTheme.typography.bodyMedium
@@ -112,7 +118,7 @@ fun ProductDetailScreen(productId: String, viewModel: SwipeViewModel, navControl
             val formattedDate = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
                 .format(Date(product.timestamp))
             Text(
-                text = "Listed on: $formattedDate",
+                text = stringResource(id = R.string.listed_on_format, formattedDate),
                 style = MaterialTheme.typography.bodySmall,
                 fontStyle = FontStyle.Italic
             )

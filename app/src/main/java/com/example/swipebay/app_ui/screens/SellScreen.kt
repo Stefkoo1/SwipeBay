@@ -1,5 +1,6 @@
 package com.example.swipebay.app_ui.screens
 
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -8,18 +9,24 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
+import com.example.swipebay.R
 import com.example.swipebay.viewmodel.SellViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,22 +44,31 @@ fun SellScreen(
     var categoryExpanded by remember { mutableStateOf(false) }
     var regionExpanded   by remember { mutableStateOf(false) }
 
-    val categoryOptions = listOf("Electronics", "Photography", "Home", "Accessories", "Music", "Fitness")
-    val regionOptions   = listOf("Vienna", "Salzburg", "Graz", "Innsbruck", "Linz")
+    val categoryOptions = listOf(
+        stringResource(id = R.string.electronics_category),
+        stringResource(id = R.string.photography_category),
+        stringResource(id = R.string.home_category),
+        stringResource(id = R.string.accessories_category),
+        stringResource(id = R.string.music_category),
+        stringResource(id = R.string.fitness_category)
+    )
 
+    val regionOptions = listOf(
+        "Vienna", "Salzburg", "Graz", "Innsbruck", "Linz"
+    )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text("List an Item for Sale", style = MaterialTheme.typography.headlineSmall)
+        Text(stringResource(id = R.string.sell_title), style = MaterialTheme.typography.headlineSmall)
         Spacer(Modifier.height(16.dp))
 
         OutlinedTextField(
             value = title,
             onValueChange = { sellViewModel.onTitleChange(it) },
-            label = { Text("Title") },
+            label = { Text(stringResource(id = R.string.title_label)) },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(8.dp))
@@ -60,24 +76,28 @@ fun SellScreen(
         OutlinedTextField(
             value = description,
             onValueChange = { sellViewModel.onDescriptionChange(it) },
-            label = { Text("Description") },
+            label = { Text(stringResource(id = R.string.description_label)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(120.dp)
         )
-
+        Spacer(Modifier.height(8.dp))
 
         OutlinedTextField(
             value = price.toString(),
-            onValueChange = {
-                val parsed = it
-                if (true) sellViewModel.onPriceChange(parsed)
-            },
-            label = { Text("Price") },
+            onValueChange = { sellViewModel.onPriceChange(it) },
+            label = { Text(stringResource(id = R.string.price_label)) },
             modifier = Modifier.fillMaxWidth()
         )
+        Spacer(Modifier.height(8.dp))
 
-        val conditionOptions = listOf("New", "Used - Like New", "Used - Good", "Used - Fair")
+        // Zustand Dropdown
+        val conditionOptions = listOf(
+            stringResource(id = R.string.condition_new),
+            stringResource(id = R.string.condition_used_like_new),
+            stringResource(id = R.string.condition_used_good),
+            stringResource(id = R.string.condition_used_fair)
+        )
         var conditionExpanded by remember { mutableStateOf(false) }
 
         ExposedDropdownMenuBox(
@@ -86,9 +106,9 @@ fun SellScreen(
         ) {
             OutlinedTextField(
                 value = condition,
-                onValueChange = {},
+                onValueChange = { },
                 readOnly = true,
-                label = { Text("Condition") },
+                label = { Text(stringResource(id = R.string.condition_label_sell)) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = conditionExpanded) },
                 modifier = Modifier
                     .menuAnchor()
@@ -111,15 +131,16 @@ fun SellScreen(
         }
         Spacer(Modifier.height(8.dp))
 
+        // Kategorie Dropdown
         ExposedDropdownMenuBox(
             expanded = categoryExpanded,
             onExpandedChange = { categoryExpanded = !categoryExpanded }
         ) {
             OutlinedTextField(
                 value = category,
-                onValueChange = {},
+                onValueChange = { },
                 readOnly = true,
-                label = { Text("Category") },
+                label = { Text(stringResource(id = R.string.category_label)) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoryExpanded) },
                 modifier = Modifier
                     .menuAnchor()
@@ -142,16 +163,16 @@ fun SellScreen(
         }
         Spacer(Modifier.height(8.dp))
 
-        // ───────── Region Dropdown ─────────
+        // Region Dropdown
         ExposedDropdownMenuBox(
             expanded = regionExpanded,
             onExpandedChange = { regionExpanded = !regionExpanded }
         ) {
             OutlinedTextField(
                 value = region,
-                onValueChange = {},
+                onValueChange = { },
                 readOnly = true,
-                label = { Text("Region") },
+                label = { Text(stringResource(id = R.string.region_label_sell)) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = regionExpanded) },
                 modifier = Modifier
                     .menuAnchor()
@@ -174,20 +195,20 @@ fun SellScreen(
         }
         Spacer(Modifier.height(8.dp))
 
-        val context = LocalContext.current
+        // Bilder auswählen
         val imageUris by sellViewModel.imageUris.collectAsState()
         val launcher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetMultipleContents()
-        ) { uris ->
+        ) { uris: List<Uri> ->
             sellViewModel.setImageUris(uris)
         }
         Button(
             onClick = { launcher.launch("image/*") },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Choose Images")
+            Text(stringResource(id = R.string.choose_images_button))
         }
-        LazyRow(modifier = Modifier.fillMaxWidth()) {
+        LazyRow(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
             items(imageUris) { uri ->
                 Image(
                     painter = rememberAsyncImagePainter(uri),
@@ -199,6 +220,8 @@ fun SellScreen(
             }
         }
         Spacer(Modifier.height(8.dp))
+
+        // Submit-Button
         Button(
             onClick = {
                 sellViewModel.listProduct()
@@ -206,7 +229,7 @@ fun SellScreen(
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Submit")
+            Text(stringResource(id = R.string.submit_button))
         }
     }
 }

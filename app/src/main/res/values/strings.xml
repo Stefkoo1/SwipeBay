@@ -1,3 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SwipeBay</string>
+
+    <!-- AuthScreen -->
+    <string name="auth_login_title">Login for SwipeBay</string>
+    <string name="auth_signup_title">Sign Up for SwipeBay</string>
+    <string name="email_label">Email</string>
+    <string name="password_label">Password</string>
+    <string name="username_label">Username</string>
+    <string name="name_label">Name</string>
+    <string name="lastname_label">Last name</string>
+    <string name="region_label">Region</string>
+    <string name="keep_signed_in">Keep me signed in</string>
+    <string name="login_button">Login</string>
+    <string name="signup_button">Sign Up</string>
+    <string name="toggle_auth_text_no_account">No account? Sign Up</string>
+    <string name="toggle_auth_text_have_account">Have an account? Login</string>
+
+    <!-- SwipeScreen -->
+    <string name="swipe_topbar_title">Browse Products</string>
+    <string name="filter_open_desc">Open Filter</string>
+    <string name="no_more_products">No more products!</string>
+    <string name="added_to_wishlist">Added to Wishlist!</string>
+    <string name="undo_button">Undo</string>
+    <string name="swipe_dismiss_desc">Dismiss</string>
+    <string name="swipe_like_desc">Like</string>
+
+    <!-- FilterSheet -->
+    <string name="filter_items_title">Filter Items</string>
+    <string name="apply_button">Apply</string>
+    <string name="reset_button">Reset</string>
+    <string name="min_price_label">Min Price</string>
+    <string name="max_price_label">Max Price</string>
+    <string name="categories_label">Categories</string>
+    <string name="condition_label">Condition</string>
+    <string name="region_label_plural">Region</string>
+    <string name="apply_filters_button">Apply Filters</string>
+
+    <!-- SellScreen -->
+    <string name="sell_title">List an Item for Sale</string>
+    <string name="title_label">Title</string>
+    <string name="description_label">Description</string>
+    <string name="price_label">Price</string>
+    <string name="condition_label_sell">Condition</string>
+    <string name="category_label">Category</string>
+    <string name="region_label_sell">Region</string>
+    <string name="choose_images_button">Choose Images</string>
+    <string name="submit_button">Submit</string>
+    <string name="condition_new">New</string>
+    <string name="condition_used_like_new">Used - Like New</string>
+    <string name="condition_used_good">Used - Good</string>
+    <string name="condition_used_fair">Used - Fair</string>
+
+    <!-- WishlistScreen -->
+    <string name="wishlist_title">Wishlist</string>
+    <string name="wishlist_empty_text">Your wishlist is empty, add some items to it!</string>
+    <string name="message_seller_desc">Message Seller</string>
+    <string name="remove_from_wishlist_desc">Remove from Wishlist</string>
+
+    <!-- ProfileScreen -->
+    <string name="profile_my_items">My Items:</string>
+    <string name="refresh_button">Refresh</string>
+    <string name="delete_item_title">Delete Item</string>
+    <string name="delete_item_text">Are you sure you want to delete \'%1$s\'?</string>
+    <string name="yes_button">Yes</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="mark_sold_title">Mark as Sold</string>
+    <string name="mark_sold_text">Are you sure you want to mark \'%1$s\' as sold?</string>
+    <string name="edit_button">Edit</string>
+    <string name="sold_button">Sold</string>
+    <string name="edit_title_dialog">Edit Item</string>
+    <string name="edit_save_button">Save</string>
+    <string name="edit_cancel_button">Cancel</string>
+    <string name="edit_profile_title">Edit Profile</string>
+    <string name="bio_label">Bio</string>
+    <string name="disliked_button">Disliked</string>
+    <string name="disliked_title">Disliked Products</string>
+    <string name="remove_from_disliked">Remove from Disliked</string>
+    <string name="close_button">Close</string>
+
+    <!-- SettingsScreen -->
+    <string name="settings_title">Settings</string>
+    <string name="login_signup_button">Log In / Sign Up</string>
+    <string name="signout_button">Sign out</string>
+
+    <!-- Beispiel-Kategorien (falls benötigt) -->
+    <string name="electronics_category">Electronics</string>
+    <string name="photography_category">Photography</string>
+    <string name="home_category">Home</string>
+    <string name="accessories_category">Accessories</string>
+    <string name="music_category">Music</string>
+    <string name="fitness_category">Fitness</string>
+
+    <!-- ProductDetailScreen -->
+    <string name="product_not_found">Product not found.</string>
+    <string name="back_button">Back</string>
+    <string name="product_price_format">Price: €%1$.2f</string>
+    <string name="listed_on_format">Listed on: %1$s</string>
+    <string name="message_seller_subject_format">Regarding your product: %1$s</string>
+    <string name="message_seller_body">Hi, I am interested in your product "%1$s".</string>
+
 </resources>

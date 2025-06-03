@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SwipeBay</string>
+
+    <!-- AuthScreen -->
+    <string name="auth_login_title">Anmeldung für SwipeBay</string>
+    <string name="auth_signup_title">Registrieren für SwipeBay</string>
+    <string name="email_label">E-Mail</string>
+    <string name="password_label">Passwort</string>
+    <string name="username_label">Benutzername</string>
+    <string name="name_label">Vorname</string>
+    <string name="lastname_label">Nachname</string>
+    <string name="region_label">Region</string>
+    <string name="keep_signed_in">Angemeldet bleiben</string>
+    <string name="login_button">Anmelden</string>
+    <string name="signup_button">Registrieren</string>
+    <string name="toggle_auth_text_no_account">Noch kein Konto? Registrieren</string>
+    <string name="toggle_auth_text_have_account">Schon ein Konto? Anmelden</string>
+
+    <!-- SwipeScreen -->
+    <string name="swipe_topbar_title">Produkte durchsuchen</string>
+    <string name="filter_open_desc">Filter öffnen</string>
+    <string name="no_more_products">Keine Produkte mehr!</string>
+    <string name="added_to_wishlist">Zur Wunschliste hinzugefügt!</string>
+    <string name="undo_button">Rückgängig</string>
+    <string name="swipe_dismiss_desc">Verwerfen</string>
+    <string name="swipe_like_desc">Gefällt mir</string>
+
+    <!-- FilterSheet -->
+    <string name="filter_items_title">Artikel filtern</string>
+    <string name="apply_button">Anwenden</string>
+    <string name="reset_button">Zurücksetzen</string>
+    <string name="min_price_label">Min. Preis</string>
+    <string name="max_price_label">Max. Preis</string>
+    <string name="categories_label">Kategorien</string>
+    <string name="condition_label">Zustand</string>
+    <string name="region_label_plural">Regionen</string>
+    <string name="apply_filters_button">Filter anwenden</string>
+
+    <!-- SellScreen -->
+    <string name="sell_title">Artikel zum Verkauf einstellen</string>
+    <string name="title_label">Titel</string>
+    <string name="description_label">Beschreibung</string>
+    <string name="price_label">Preis</string>
+    <string name="condition_label_sell">Zustand</string>
+    <string name="category_label">Kategorie</string>
+    <string name="region_label_sell">Region</string>
+    <string name="choose_images_button">Bilder auswählen</string>
+    <string name="submit_button">Absenden</string>
+    <string name="condition_new">Neu</string>
+    <string name="condition_used_like_new">Gebraucht – Wie Neu</string>
+    <string name="condition_used_good">Gebraucht – Gut</string>
+    <string name="condition_used_fair">Gebraucht – Mäßig</string>
+
+    <!-- WishlistScreen -->
+    <string name="wishlist_title">Wunschliste</string>
+    <string name="wishlist_empty_text">Deine Wunschliste ist leer, füge einige Artikel hinzu!</string>
+    <string name="message_seller_desc">Verkäufer kontaktieren</string>
+    <string name="remove_from_wishlist_desc">Aus Wunschliste entfernen</string>
+
+    <!-- ProfileScreen -->
+    <string name="profile_my_items">Meine Artikel:</string>
+    <string name="refresh_button">Aktualisieren</string>
+    <string name="delete_item_title">Artikel löschen</string>
+    <string name="delete_item_text">Möchtest du \'%1$s\' wirklich löschen?</string>
+    <string name="yes_button">Ja</string>
+    <string name="cancel_button">Abbrechen</string>
+    <string name="mark_sold_title">Als verkauft markieren</string>
+    <string name="mark_sold_text">Möchtest du \'%1$s\' wirklich als verkauft markieren?</string>
+    <string name="edit_button">Bearbeiten</string>
+    <string name="sold_button">Verkauft</string>
+    <string name="edit_title_dialog">Artikel bearbeiten</string>
+    <string name="edit_save_button">Speichern</string>
+    <string name="edit_cancel_button">Abbrechen</string>
+    <string name="edit_profile_title">Profil bearbeiten</string>
+    <string name="bio_label">Bio</string>
+    <string name="disliked_button">Abgelehnt</string>
+    <string name="disliked_title">Abgelehnte Artikel</string>
+    <string name="remove_from_disliked">Aus Abgelehnten entfernen</string>
+    <string name="close_button">Schließen</string>
+
+    <!-- SettingsScreen -->
+    <string name="settings_title">Einstellungen</string>
+    <string name="login_signup_button">Anmelden / Registrieren</string>
+    <string name="signout_button">Abmelden</string>
+
+    <!-- Beispiel-Kategorien (Deutsch) -->
+    <string name="electronics_category">Elektronik</string>
+    <string name="photography_category">Fotografie</string>
+    <string name="home_category">Haushalt</string>
+    <string name="accessories_category">Zubehör</string>
+    <string name="music_category">Musik</string>
+    <string name="fitness_category">Fitness</string>
+
+    <!-- ProductDetailScreen -->
+    <string name="product_not_found">Produkt nicht gefunden.</string>
+    <string name="back_button">Zurück</string>
+    <string name="product_price_format">Preis: €%1$.2f</string>
+    <string name="listed_on_format">Eingestellt am: %1$s</string>
+    <string name="message_seller_subject_format">Bezüglich deines Produkts: %1$s</string>
+    <string name="message_seller_body">Hallo, ich habe Interesse an deinem Produkt "%1$s".</string>
+
+</resources>

@@ -10,16 +10,19 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.swipebay.R
 import com.example.swipebay.app_ui.components.FilterSheet
 import com.example.swipebay.app_ui.components.SwipeCard
 import com.example.swipebay.viewmodel.SwipeViewModel
@@ -61,14 +64,14 @@ fun SwipeScreen(
 
     Scaffold(
         topBar = {
-            // Statt SmallTopAppBar nutzen wir hier einfach TopAppBar (Material3)
             TopAppBar(
-                title = { Text("Browse Products") },
+                title = { Text(stringResource(id = R.string.swipe_topbar_title)) },
                 actions = {
                     IconButton(onClick = { showFilter = true }) {
                         Icon(
                             imageVector = Icons.Default.FilterList,
-                            contentDescription = "Filter öffnen"
+                            contentDescription = stringResource(id = R.string.filter_open_desc),
+                            tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
                 }
@@ -128,7 +131,7 @@ fun SwipeScreen(
                             ) {
                                 Icon(
                                     Icons.Default.Close,
-                                    contentDescription = "Dismiss",
+                                    contentDescription = stringResource(id = R.string.swipe_dismiss_desc),
                                     tint = Color.Red,
                                     modifier = Modifier
                                         .padding(12.dp)
@@ -158,7 +161,7 @@ fun SwipeScreen(
                             ) {
                                 Icon(
                                     Icons.Default.Favorite,
-                                    contentDescription = "Like",
+                                    contentDescription = stringResource(id = R.string.swipe_like_desc),
                                     tint = Color(0xFFE91E63),
                                     modifier = Modifier
                                         .padding(12.dp)
@@ -177,7 +180,7 @@ fun SwipeScreen(
                         )
                     } else {
                         Text(
-                            "Keine Produkte mehr!",
+                            stringResource(id = R.string.no_more_products),
                             modifier = Modifier.align(Alignment.Center),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
@@ -202,7 +205,7 @@ fun SwipeScreen(
                                 .padding(vertical = 4.dp)
                         ) {
                             Text(
-                                text = "Added to Wishlist!",
+                                text = stringResource(id = R.string.added_to_wishlist),
                                 modifier = Modifier
                                     .padding(horizontal = 16.dp, vertical = 12.dp),
                                 color = Color.White,
@@ -225,7 +228,7 @@ fun SwipeScreen(
                         contentAlignment = Alignment.BottomCenter
                     ) {
                         Button(onClick = { viewModel.undoRemove() }) {
-                            Text("Undo")
+                            Text(stringResource(id = R.string.undo_button))
                         }
                     }
                 }
