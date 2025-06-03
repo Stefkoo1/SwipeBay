@@ -153,7 +153,7 @@ class SwipeViewModel : ViewModel() {
                     "dislikedAt"  to Timestamp.now(),
                     "title"       to product.title,
                     "description" to product.description,
-                    "price"       to product.price,
+                    "price"       to product.price.toDouble(),
                     "imageUrls"   to product.imageUrls,
                     "category"    to product.category,
                     "condition"   to product.condition,
