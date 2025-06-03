@@ -49,7 +49,7 @@ fun WishlistScreen(viewModel: WishlistViewModel) {
                         item.product.title,
                         item.product.price
                     )
-                    val body = stringResource(id = R.string.message_seller_body)
+                    val body = stringResource(id = R.string.message_seller_body, item.product.title)
 
                     SwipeCard(
                         product = item.product,
