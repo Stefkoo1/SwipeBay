@@ -16,11 +16,19 @@ fun FilterSheet(
     onApply: (FilterOptions) -> Unit,
     onDismiss: () -> Unit
 ) {
-    var minPrice by remember { mutableStateOf(current.minPrice?.toString() ?: "") }
-    var maxPrice by remember { mutableStateOf(current.maxPrice?.toString() ?: "") }
-    var selectedCats by remember { mutableStateOf(current.categories.toMutableSet()) }
-    var selectedConditions by remember { mutableStateOf(current.conditions.toMutableSet()) }
-    var selectedRegions by remember { mutableStateOf(current.regions.toMutableSet()) }
+    var minPrice by remember(current) { mutableStateOf(current.minPrice?.toString() ?: "") }
+    var maxPrice by remember(current) { mutableStateOf(current.maxPrice?.toString() ?: "") }
+    var selectedCats by remember(current) { mutableStateOf(current.categories.toMutableSet()) }
+    var selectedConditions by remember(current) { mutableStateOf(current.conditions.toMutableSet()) }
+    var selectedRegions by remember(current) { mutableStateOf(current.regions.toMutableSet()) }
+
+    LaunchedEffect(current) {
+        minPrice = current.minPrice?.toString() ?: ""
+        maxPrice = current.maxPrice?.toString() ?: ""
+        selectedCats = current.categories.toMutableSet()
+        selectedConditions = current.conditions.toMutableSet()
+        selectedRegions = current.regions.toMutableSet()
+    }
 
 
     val allCategories = listOf("Electronics", "Photography", "Home", "Accessories", "Music", "Fitness")
@@ -36,14 +44,31 @@ fun FilterSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text("Filter Items", style = MaterialTheme.typography.headlineSmall)
-                TextButton(onClick = {
-                    minPrice = ""
-                    maxPrice = ""
-                    selectedCats.clear()
-                    selectedConditions.clear()
-                    selectedRegions.clear()
-                }) {
-                    Text("Reset", color = MaterialTheme.colorScheme.primary)
+                Row {
+                    TextButton(onClick = {
+                        onApply(
+                            FilterOptions(
+                                minPrice = minPrice.toIntOrNull(),
+                                maxPrice = maxPrice.toIntOrNull(),
+                                categories = selectedCats,
+                                conditions = selectedConditions,
+                                regions = selectedRegions
+                            )
+                        )
+                        onDismiss()
+                    }) {
+                        Text("Apply", color = MaterialTheme.colorScheme.primary)
+                    }
+                    Spacer(Modifier.width(8.dp))
+                    TextButton(onClick = {
+                        minPrice = ""
+                        maxPrice = ""
+                        selectedCats.clear()
+                        selectedConditions.clear()
+                        selectedRegions.clear()
+                    }) {
+                        Text("Reset", color = MaterialTheme.colorScheme.primary)
+                    }
                 }
             }
             Spacer(Modifier.height(8.dp))
@@ -75,8 +100,9 @@ fun FilterSheet(
                     FilterChip(
                         selected = cat in selectedCats,
                         onClick = {
-                            if (cat in selectedCats) selectedCats.remove(cat)
-                            else selectedCats.add(cat)
+                            selectedCats = selectedCats.toMutableSet().apply {
+                                if (cat in this) remove(cat) else add(cat)
+                            }
                         },
                         label = { Text(cat) },
                         colors = FilterChipDefaults.filterChipColors(
@@ -104,8 +130,9 @@ fun FilterSheet(
                     FilterChip(
                         selected = cond in selectedConditions,
                         onClick = {
-                            if (cond in selectedConditions) selectedConditions.remove(cond)
-                            else selectedConditions.add(cond)
+                            selectedConditions = selectedConditions.toMutableSet().apply {
+                                if (cond in this) remove(cond) else add(cond)
+                            }
                         },
                         label = { Text(cond) },
                         colors = FilterChipDefaults.filterChipColors(
@@ -133,8 +160,9 @@ fun FilterSheet(
                     FilterChip(
                         selected = reg in selectedRegions,
                         onClick = {
-                            if (reg in selectedRegions) selectedRegions.remove(reg)
-                            else selectedRegions.add(reg)
+                            selectedRegions = selectedRegions.toMutableSet().apply {
+                                if (reg in this) remove(reg) else add(reg)
+                            }
                         },
                         label = { Text(reg) },
                         colors = FilterChipDefaults.filterChipColors(
