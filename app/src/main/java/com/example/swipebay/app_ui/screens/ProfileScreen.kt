@@ -36,6 +36,7 @@ import com.example.swipebay.viewmodel.ProfileViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.ui.text.style.TextOverflow
 
 
 data class Item(
@@ -242,83 +243,109 @@ fun ProfileScreen() {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .heightIn(min = 170.dp) // increased min height for buttons row
                         .padding(vertical = 8.dp),
                     elevation = CardDefaults.cardElevation(4.dp)
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        if (item.imageUrls.isNotEmpty()) {
-                            val painter = rememberAsyncImagePainter(model = item.imageUrls.first())
-                            Box(
-                                modifier = Modifier
-                                    .size(100.dp)
-                                    .clip(MaterialTheme.shapes.medium)
-                            ) {
-                                AsyncImage(
-                                    model = item.imageUrls.first(),
-                                    contentDescription = null,
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentScale = ContentScale.Crop
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.width(12.dp))
-
-                        Column(
+                        Row(
                             modifier = Modifier
-                                .weight(1f)
-                                .padding(end = 8.dp)
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(
-                                text = item.title,
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                            Text(
-                                text = "€${item.price}",
-                                style = MaterialTheme.typography.titleLarge,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    text = "${item.wishlistedBy}",
-                                    style = MaterialTheme.typography.labelMedium
-                                )
-                                Icon(
-                                    imageVector = Icons.Default.Star,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
+                            if (item.imageUrls.isNotEmpty()) {
+                                val painter = rememberAsyncImagePainter(model = item.imageUrls.first())
+                                Box(
+                                    modifier = Modifier
+                                        .size(100.dp)
+                                        .clip(MaterialTheme.shapes.medium)
+                                ) {
+                                    AsyncImage(
+                                        model = item.imageUrls.first(),
+                                        contentDescription = null,
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
                             }
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                                Button(onClick = { viewModel.markItemAsSold(item) }) {
-                                    Text(text = stringResource(R.string.sold_button))
+
+                            Spacer(modifier = Modifier.width(12.dp))
+
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(end = 8.dp)
+                            ) {
+                                Text(
+                                    text = item.title,
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                                Text(
+                                    text = "€${item.price}",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        text = "${item.wishlistedBy}",
+                                        style = MaterialTheme.typography.labelMedium
+                                    )
+                                    Icon(
+                                        imageVector = Icons.Default.Star,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
                                 }
-                                Button(onClick = { itemToDelete = item }) {
-                                    Text(text = stringResource(R.string.delete_item_title))
-                                }
+                            }
+
+                            IconButton(onClick = {
+                                itemToEdit = item
+                                editedTitle = item.title
+                                editedDescription = item.description
+                                editedPrice = item.price.toString()
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.Edit,
+                                    contentDescription = stringResource(R.string.edit_button),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
                             }
                         }
-
-                        IconButton(onClick = {
-                            itemToEdit = item
-                            editedTitle = item.title
-                            editedDescription = item.description
-                            editedPrice = item.price.toString()
-                        }) {
-                            Icon(
-                                imageVector = Icons.Default.Edit,
-                                contentDescription = stringResource(R.string.edit_button),
-                                tint = MaterialTheme.colorScheme.primary
-                            )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 12.dp, vertical = 8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Button(
+                                onClick = { viewModel.markItemAsSold(item) },
+                                modifier = Modifier.weight(1.1f)
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.sold_button),
+                                    maxLines = 1,
+                                    softWrap = false,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                            Button(
+                                onClick = { itemToDelete = item },
+                                modifier = Modifier.weight(1.1f)
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.delete_item_title),
+                                    maxLines = 1,
+                                    softWrap = false,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
                         }
                     }
                 }

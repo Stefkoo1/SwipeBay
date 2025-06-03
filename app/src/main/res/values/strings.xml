@@ -61,7 +61,7 @@
     <!-- ProfileScreen -->
     <string name="profile_my_items">My Items:</string>
     <string name="refresh_button">Refresh</string>
-    <string name="delete_item_title">Delete Item</string>
+    <string name="delete_item_title">Delete</string>
     <string name="delete_item_text">Are you sure you want to delete \'%1$s\'?</string>
     <string name="yes_button">Yes</string>
     <string name="cancel_button">Cancel</string>
@@ -99,5 +99,6 @@
     <string name="listed_on_format">Listed on: %1$s</string>
     <string name="message_seller_subject_format">Regarding your product: %1$s</string>
     <string name="message_seller_body">Hi, I am interested in your product "%1$s".</string>
+    <string name="region_Vienna">Vienna</string>
 
 </resources>

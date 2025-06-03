@@ -10,7 +10,7 @@
     <string name="username_label">Benutzername</string>
     <string name="name_label">Vorname</string>
     <string name="lastname_label">Nachname</string>
-    <string name="region_label">Region</string>
+    <string name="region_label">Ort</string>
     <string name="keep_signed_in">Angemeldet bleiben</string>
     <string name="login_button">Anmelden</string>
     <string name="signup_button">Registrieren</string>
@@ -61,7 +61,7 @@
     <!-- ProfileScreen -->
     <string name="profile_my_items">Meine Artikel:</string>
     <string name="refresh_button">Aktualisieren</string>
-    <string name="delete_item_title">Artikel löschen</string>
+    <string name="delete_item_title">" löschen"</string>
     <string name="delete_item_text">Möchtest du \'%1$s\' wirklich löschen?</string>
     <string name="yes_button">Ja</string>
     <string name="cancel_button">Abbrechen</string>
@@ -76,7 +76,7 @@
     <string name="bio_label">Bio</string>
     <string name="disliked_button">Abgelehnt</string>
     <string name="disliked_title">Abgelehnte Artikel</string>
-    <string name="remove_from_disliked">Aus Abgelehnten entfernen</string>
+    <string name="remove_from_disliked">Entfernen</string>
     <string name="close_button">Schließen</string>
 
     <!-- SettingsScreen -->
@@ -99,5 +99,6 @@
     <string name="listed_on_format">Eingestellt am: %1$s</string>
     <string name="message_seller_subject_format">Bezüglich deines Produkts: %1$s</string>
     <string name="message_seller_body">Hallo, ich habe Interesse an deinem Produkt "%1$s".</string>
+    <string name="region_Vienna">Wien</string>
 
 </resources>
