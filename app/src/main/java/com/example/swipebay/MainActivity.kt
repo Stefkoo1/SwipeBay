@@ -59,6 +59,9 @@ class MainActivity : ComponentActivity() {
 
         val prefs = getSharedPreferences("auth_prefs", MODE_PRIVATE)
         val keepSignedIn = prefs.getBoolean("keepSignedIn", false)
+        if (!keepSignedIn) {
+            FirebaseAuth.getInstance().signOut()
+        }
 
         // FirebaseAuth listener setup
         val firebaseAuth = FirebaseAuth.getInstance()

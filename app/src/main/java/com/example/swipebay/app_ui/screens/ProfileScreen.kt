@@ -243,109 +243,104 @@ fun ProfileScreen() {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(min = 170.dp) // increased min height for buttons row
                         .padding(vertical = 8.dp),
                     elevation = CardDefaults.cardElevation(4.dp)
                 ) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth()
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(12.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            if (item.imageUrls.isNotEmpty()) {
-                                val painter = rememberAsyncImagePainter(model = item.imageUrls.first())
-                                Box(
-                                    modifier = Modifier
-                                        .size(100.dp)
-                                        .clip(MaterialTheme.shapes.medium)
-                                ) {
-                                    AsyncImage(
-                                        model = item.imageUrls.first(),
-                                        contentDescription = null,
-                                        modifier = Modifier.fillMaxSize(),
-                                        contentScale = ContentScale.Crop
-                                    )
-                                }
-                            }
-
-                            Spacer(modifier = Modifier.width(12.dp))
-
-                            Column(
+                        if (item.imageUrls.isNotEmpty()) {
+                            val painter = rememberAsyncImagePainter(model = item.imageUrls.first())
+                            Box(
                                 modifier = Modifier
-                                    .weight(1f)
-                                    .padding(end = 8.dp)
+                                    .size(100.dp)
+                                    .clip(MaterialTheme.shapes.medium)
                             ) {
-                                Text(
-                                    text = item.title,
-                                    style = MaterialTheme.typography.titleMedium
-                                )
-                                Text(
-                                    text = "€${item.price}",
-                                    style = MaterialTheme.typography.titleLarge,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text(
-                                        text = "${item.wishlistedBy}",
-                                        style = MaterialTheme.typography.labelMedium
-                                    )
-                                    Icon(
-                                        imageVector = Icons.Default.Star,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.size(16.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                }
-                            }
-
-                            IconButton(onClick = {
-                                itemToEdit = item
-                                editedTitle = item.title
-                                editedDescription = item.description
-                                editedPrice = item.price.toString()
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Default.Edit,
-                                    contentDescription = stringResource(R.string.edit_button),
-                                    tint = MaterialTheme.colorScheme.primary
+                                AsyncImage(
+                                    model = item.imageUrls.first(),
+                                    contentDescription = null,
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop
                                 )
                             }
                         }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(
+
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        Column(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 12.dp, vertical = 8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                .weight(1f)
+                                .padding(end = 8.dp)
                         ) {
-                            Button(
-                                onClick = { viewModel.markItemAsSold(item) },
-                                modifier = Modifier.weight(1.1f)
-                            ) {
+                            Text(
+                                text = item.title,
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Text(
+                                text = "€%.2f".format(item.price),
+                                style = MaterialTheme.typography.titleLarge,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    text = stringResource(R.string.sold_button),
-                                    maxLines = 1,
-                                    softWrap = false,
-                                    overflow = TextOverflow.Ellipsis
+                                    text = "${item.wishlistedBy}",
+                                    style = MaterialTheme.typography.labelMedium
                                 )
+                                Icon(
+                                    imageVector = Icons.Default.Star,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
                             }
-                            Button(
-                                onClick = { itemToDelete = item },
-                                modifier = Modifier.weight(1.1f)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 4.dp),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
-                                Text(
-                                    text = stringResource(R.string.delete_item_title),
-                                    maxLines = 1,
-                                    softWrap = false,
-                                    overflow = TextOverflow.Ellipsis
-                                )
+                                Button(
+                                    onClick = { viewModel.markItemAsSold(item) },
+                                    modifier = Modifier.weight(1.1f)
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.sold_button),
+                                        maxLines = 1,
+                                        softWrap = false,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+                                Button(
+                                    onClick = { itemToDelete = item },
+                                    modifier = Modifier.weight(1.1f)
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.delete_item_title),
+                                        maxLines = 1,
+                                        softWrap = false,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
                             }
+                        }
+
+                        IconButton(onClick = {
+                            itemToEdit = item
+                            editedTitle = item.title
+                            editedDescription = item.description
+                            editedPrice = item.price.toString()
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = stringResource(R.string.edit_button),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
                         }
                     }
                 }
