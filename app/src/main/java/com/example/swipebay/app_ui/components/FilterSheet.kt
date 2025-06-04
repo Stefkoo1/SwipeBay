@@ -76,13 +76,16 @@ fun FilterSheet(
 
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Column(Modifier.padding(16.dp)) {
-            // ─── Überschrift + Reset-Button ───────────────────────────────
+            // ─── Überschrift + Reset-Button
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Filter Items", style = MaterialTheme.typography.headlineSmall)
+                Text(
+                    text = stringResource(id = R.string.filter_items_title),
+                    style = MaterialTheme.typography.headlineSmall
+                )
                 Row {
                     TextButton(onClick = {
                         onApply(
@@ -96,7 +99,10 @@ fun FilterSheet(
                         )
                         onDismiss()
                     }) {
-                        Text("Apply", color = MaterialTheme.colorScheme.primary)
+                        Text(
+                            text = stringResource(id = R.string.apply_button),
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     }
                     Spacer(Modifier.width(8.dp))
                     TextButton(onClick = {
@@ -106,7 +112,10 @@ fun FilterSheet(
                         selectedConditions.clear()
                         selectedRegions.clear()
                     }) {
-                        Text("Reset", color = MaterialTheme.colorScheme.primary)
+                        Text(
+                            text = stringResource(id = R.string.reset_button),
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     }
                 }
             }
@@ -116,7 +125,7 @@ fun FilterSheet(
             OutlinedTextField(
                 value = minPrice,
                 onValueChange = { minPrice = it },
-                label = { Text("Min Price") },
+                label = { Text(stringResource(id = R.string.min_price_label)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -124,7 +133,7 @@ fun FilterSheet(
             OutlinedTextField(
                 value = maxPrice,
                 onValueChange = { maxPrice = it },
-                label = { Text("Max Price") },
+                label = { Text(stringResource(id = R.string.max_price_label)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -132,7 +141,10 @@ fun FilterSheet(
             Spacer(Modifier.height(16.dp))
 
             // ─── Kategorie Auswahl ──────────────────────────────────────
-            Text("Categories", style = MaterialTheme.typography.labelMedium)
+            Text(
+                text = stringResource(id = R.string.categories_label),
+                style = MaterialTheme.typography.labelMedium
+            )
             Spacer(Modifier.height(4.dp))
             FlowRow(mainAxisSpacing = 8.dp, crossAxisSpacing = 8.dp) {
                 allCategories.forEach { cat ->
@@ -162,7 +174,10 @@ fun FilterSheet(
             Spacer(Modifier.height(16.dp))
 
             // ─── Zustand Auswahl ────────────────────────────────────────
-            Text("Condition", style = MaterialTheme.typography.labelMedium)
+            Text(
+                text = stringResource(id = R.string.condition_label),
+                style = MaterialTheme.typography.labelMedium
+            )
             Spacer(Modifier.height(4.dp))
             FlowRow(mainAxisSpacing = 8.dp, crossAxisSpacing = 8.dp) {
                 conditionOptions.forEach { cond ->
@@ -192,7 +207,10 @@ fun FilterSheet(
             Spacer(Modifier.height(16.dp))
 
             // ─── Region Auswahl ──────────────────────────────────────────
-            Text("Region", style = MaterialTheme.typography.labelMedium)
+            Text(
+                text = stringResource(id = R.string.region_label_plural),
+                style = MaterialTheme.typography.labelMedium
+            )
             Spacer(Modifier.height(4.dp))
             FlowRow(mainAxisSpacing = 8.dp, crossAxisSpacing = 8.dp) {
                 regionOptions.forEach { reg ->
@@ -239,7 +257,9 @@ fun FilterSheet(
                     .fillMaxWidth()
                     .height(48.dp)
             ) {
-                Text("Apply Filters")
+                Text(
+                    text = stringResource(id = R.string.apply_filters_button)
+                )
             }
 
             Spacer(Modifier.height(8.dp))
