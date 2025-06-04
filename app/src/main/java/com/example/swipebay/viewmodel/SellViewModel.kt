@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import android.net.Uri
+import com.example.swipebay.R
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -95,10 +96,10 @@ class SellViewModel(application: Application) : AndroidViewModel(application) {
 
                 val newProduct = Product(
                     id = "",
-                    price = _price.value.toDouble() ,
+                    price = _price.value.toDouble(),
                     description = _description.value,
-                    category = _category.value,
-                    condition = _condition.value,
+                    category = categoryMap[_category.value] ?: "Unknown",
+                    condition = conditionMap[_condition.value] ?: "Unknown",
                     location = _region.value,
                     sellerId = currentUser.uid,
                     timestamp = System.currentTimeMillis(),
@@ -116,5 +117,21 @@ class SellViewModel(application: Application) : AndroidViewModel(application) {
                 Log.e("SellViewModel", "Error uploading product with images", e)
             }
         }
+
     }
+    private val conditionMap = mapOf(
+        getApplication<Application>().getString(R.string.condition_new) to "New",
+        getApplication<Application>().getString(R.string.condition_used_like_new) to "Used - Like New",
+        getApplication<Application>().getString(R.string.condition_used_good) to "Used - Good",
+        getApplication<Application>().getString(R.string.condition_used_fair) to "Used - Fair"
+    )
+
+    private val categoryMap = mapOf(
+        getApplication<Application>().getString(R.string.electronics_category) to "Electronics",
+        getApplication<Application>().getString(R.string.photography_category) to "Photography",
+        getApplication<Application>().getString(R.string.home_category) to "Home",
+        getApplication<Application>().getString(R.string.accessories_category) to "Accessories",
+        getApplication<Application>().getString(R.string.music_category) to "Music",
+        getApplication<Application>().getString(R.string.fitness_category) to "Fitness"
+    )
 }
