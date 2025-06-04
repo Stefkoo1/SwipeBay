@@ -6,6 +6,11 @@ import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -24,57 +29,107 @@ fun WishlistScreen(viewModel: WishlistViewModel) {
     val wishlist by viewModel.wishlistItems.collectAsState()
     val context = LocalContext.current
 
-    Column(
+    BoxWithConstraints(
         Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text(
-            text = stringResource(id = R.string.wishlist_title),
-            style = androidx.compose.material3.MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
-        Spacer(Modifier.height(16.dp))
+        val maxWidth = this.maxWidth
+        Column(
+            Modifier
+                .fillMaxSize()
+        ) {
+            Text(
+                text = stringResource(id = R.string.wishlist_title),
+                style = androidx.compose.material3.MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+            Spacer(Modifier.height(16.dp))
 
-        if (wishlist.isEmpty()) {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(stringResource(id = R.string.wishlist_empty_text))
-            }
-        } else {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                items(wishlist) { item ->
-                    // Precompute subject and body outside the non-Composable lambda:
-                    val subject = stringResource(
-                        id = R.string.message_seller_subject_format,
-                        item.product.title,
-                        item.product.price
-                    )
-                    val body = stringResource(id = R.string.message_seller_body, item.product.title)
+            if (wishlist.isEmpty()) {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(stringResource(id = R.string.wishlist_empty_text))
+                }
+            } else {
+                if (maxWidth > 600.dp) {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        items(wishlist) { item ->
+                            // Precompute subject and body outside the non-Composable lambda:
+                            val subject = stringResource(
+                                id = R.string.message_seller_subject_format,
+                                item.product.title,
+                                item.product.price
+                            )
+                            val body = stringResource(id = R.string.message_seller_body, item.product.title)
 
-                    SwipeCard(
-                        product = item.product,
-                        onSwipeLeft = {},
-                        onSwipeRight = {},
-                        onClick = {},
-                        isSwipeEnabled = false,
-                        isWishlistItem = true,
-                        onRemoveFromWishlist = {
-                            viewModel.removeFromWishlist(item.product.id)
-                        },
-                        onSellMailToSeller = {
-                            viewModel.getSellerEmail(item.product.sellerId) { email ->
-                                if (email != null) {
-                                    val uri = Uri.parse(
-                                        "mailto:$email?subject=${Uri.encode(subject)}&body=${Uri.encode(body)}"
-                                    )
-                                    val intent = Intent(Intent.ACTION_SENDTO, uri)
-                                    context.startActivity(Intent.createChooser(intent, null))
-                                } else {
-                                    Log.e("EmailError", "E-Mail konnte nicht geladen werden.")
+                            SwipeCard(
+                                product = item.product,
+                                onSwipeLeft = {},
+                                onSwipeRight = {},
+                                onClick = {},
+                                isSwipeEnabled = false,
+                                isWishlistItem = true,
+                                onRemoveFromWishlist = {
+                                    viewModel.removeFromWishlist(item.product.id)
+                                },
+                                onSellMailToSeller = {
+                                    viewModel.getSellerEmail(item.product.sellerId) { email ->
+                                        if (email != null) {
+                                            val uri = Uri.parse(
+                                                "mailto:$email?subject=${Uri.encode(subject)}&body=${Uri.encode(body)}"
+                                            )
+                                            val intent = Intent(Intent.ACTION_SENDTO, uri)
+                                            context.startActivity(Intent.createChooser(intent, null))
+                                        } else {
+                                            Log.e("EmailError", "E-Mail konnte nicht geladen werden.")
+                                        }
+                                    }
                                 }
-                            }
+                            )
                         }
-                    )
+                    }
+                } else {
+                    LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        items(wishlist) { item ->
+                            // Precompute subject and body outside the non-Composable lambda:
+                            val subject = stringResource(
+                                id = R.string.message_seller_subject_format,
+                                item.product.title,
+                                item.product.price
+                            )
+                            val body = stringResource(id = R.string.message_seller_body, item.product.title)
+
+                            SwipeCard(
+                                product = item.product,
+                                onSwipeLeft = {},
+                                onSwipeRight = {},
+                                onClick = {},
+                                isSwipeEnabled = false,
+                                isWishlistItem = true,
+                                onRemoveFromWishlist = {
+                                    viewModel.removeFromWishlist(item.product.id)
+                                },
+                                onSellMailToSeller = {
+                                    viewModel.getSellerEmail(item.product.sellerId) { email ->
+                                        if (email != null) {
+                                            val uri = Uri.parse(
+                                                "mailto:$email?subject=${Uri.encode(subject)}&body=${Uri.encode(body)}"
+                                            )
+                                            val intent = Intent(Intent.ACTION_SENDTO, uri)
+                                            context.startActivity(Intent.createChooser(intent, null))
+                                        } else {
+                                            Log.e("EmailError", "E-Mail konnte nicht geladen werden.")
+                                        }
+                                    }
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
