@@ -171,19 +171,19 @@ fun SwipeScreen(
                         }
                     }
                 } else {
-                    // Wenn keine Produkte mehr vorhanden sind
-                    if (!cardVisible.value) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .size(48.dp)
-                                .align(Alignment.Center)
-                        )
-                    } else {
+                    // Wenn keine Produkte mehr vorhanden sind oder Karte lädt
+                    if (products.isEmpty()) {
                         Text(
                             stringResource(id = R.string.no_more_products),
                             modifier = Modifier.align(Alignment.Center),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        )
+                    } else if (!cardVisible.value) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .align(Alignment.Center)
                         )
                     }
                 }
