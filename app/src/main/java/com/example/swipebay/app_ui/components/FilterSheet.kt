@@ -5,9 +5,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.swipebay.viewmodel.SwipeViewModel.FilterOptions
 import com.google.accompanist.flowlayout.FlowRow
+import com.example.swipebay.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -16,6 +18,35 @@ fun FilterSheet(
     onApply: (FilterOptions) -> Unit,
     onDismiss: () -> Unit
 ) {
+    val categoryElectronics = stringResource(R.string.electronics_category)
+    val categoryPhotography = stringResource(R.string.photography_category)
+    val categoryHome = stringResource(R.string.home_category)
+    val categoryAccessories = stringResource(R.string.accessories_category)
+    val categoryMusic = stringResource(R.string.music_category)
+    val categoryFitness = stringResource(R.string.fitness_category)
+
+    val conditionNew = stringResource(R.string.condition_new)
+    val conditionUsedLikeNew = stringResource(R.string.condition_used_like_new)
+    val conditionUsedGood = stringResource(R.string.condition_used_good)
+    val conditionUsedFair = stringResource(R.string.condition_used_fair)
+
+    val categoryMap = mapOf(
+        categoryElectronics to "Electronics",
+        categoryPhotography to "Photography",
+        categoryHome to "Home",
+        categoryAccessories to "Accessories",
+        categoryMusic to "Music",
+        categoryFitness to "Fitness"
+    )
+
+    val conditionMap = mapOf(
+        conditionNew to "New",
+        conditionUsedLikeNew to "Used - Like New",
+        conditionUsedGood to "Used - Good",
+        conditionUsedFair to "Used - Fair"
+    )
+
+    val reverseConditionMap = conditionMap.entries.associate { (k, v) -> v to k }
     var minPrice by remember(current) { mutableStateOf(current.minPrice?.toString() ?: "") }
     var maxPrice by remember(current) { mutableStateOf(current.maxPrice?.toString() ?: "") }
     var selectedCats by remember(current) { mutableStateOf(current.categories.toMutableSet()) }
@@ -31,8 +62,8 @@ fun FilterSheet(
     }
 
 
-    val allCategories = listOf("Electronics", "Photography", "Home", "Accessories", "Music", "Fitness")
-    val conditionOptions = listOf("New", "Used - Like New", "Used - Good", "Used - Fair")
+    val allCategories = categoryMap.keys.toList()
+    val conditionOptions = conditionMap.keys.toList()
     val regionOptions = listOf("Vienna", "Salzburg", "Graz", "Innsbruck", "Linz")
 
     ModalBottomSheet(onDismissRequest = onDismiss) {
@@ -50,9 +81,9 @@ fun FilterSheet(
                             FilterOptions(
                                 minPrice = minPrice.toIntOrNull(),
                                 maxPrice = maxPrice.toIntOrNull(),
-                                categories = selectedCats,
-                                conditions = selectedConditions,
-                                regions = selectedRegions
+                                categories = selectedCats.mapNotNull { categoryMap[it] }.toSet(),
+                                conditions = selectedConditions.mapNotNull { conditionMap[it] }.toSet(),
+                                regions = selectedRegions // hier keine Übersetzung nötig
                             )
                         )
                         onDismiss()
