@@ -64,7 +64,15 @@ fun FilterSheet(
 
     val allCategories = categoryMap.keys.toList()
     val conditionOptions = conditionMap.keys.toList()
-    val regionOptions = listOf("Vienna", "Salzburg", "Graz", "Innsbruck", "Linz")
+    val regionMap = mapOf(
+        stringResource(R.string.region_Vienna) to "Vienna",
+        "Salzburg" to "Salzburg",
+        "Graz" to "Graz",
+        "Innsbruck" to "Innsbruck",
+        "Linz" to "Linz"
+    )
+    val reverseRegionMap = regionMap.entries.associate { (k, v) -> v to k }
+    val regionOptions = regionMap.keys.toList()
 
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Column(Modifier.padding(16.dp)) {
@@ -83,7 +91,7 @@ fun FilterSheet(
                                 maxPrice = maxPrice.toIntOrNull(),
                                 categories = selectedCats.mapNotNull { categoryMap[it] }.toSet(),
                                 conditions = selectedConditions.mapNotNull { conditionMap[it] }.toSet(),
-                                regions = selectedRegions // hier keine Übersetzung nötig
+                                regions = selectedRegions.mapNotNull { regionMap[it] }.toSet()
                             )
                         )
                         onDismiss()
@@ -220,9 +228,9 @@ fun FilterSheet(
                         FilterOptions(
                             minPrice = minPrice.toIntOrNull(),
                             maxPrice = maxPrice.toIntOrNull(),
-                            categories = selectedCats,
-                            conditions = selectedConditions,
-                            regions = selectedRegions
+                            categories = selectedCats.mapNotNull { categoryMap[it] }.toSet(),
+                            conditions = selectedConditions.mapNotNull { conditionMap[it] }.toSet(),
+                            regions = selectedRegions.mapNotNull { regionMap[it] }.toSet()
                         )
                     )
                     onDismiss()
