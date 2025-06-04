@@ -168,7 +168,7 @@ fun SwipeCard(
                                 }
                             }
                         }
-                        Text("${product.price}", fontSize = 16.sp)
+                        Text("€${product.price}", fontSize = 16.sp)
                         Text(product.description, fontSize = 14.sp)
                     }
                 }
